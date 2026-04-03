@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Menu, X, Home, Building2, Camera, Palette, PartyPopper, Images, CalendarCheck } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import sikaraLogo from '@/assets/sikara-logo.png';
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -19,7 +18,12 @@ const Navbar = () => {
     <nav className="sticky top-0 z-40 bg-card/80 backdrop-blur-md border-b border-border">
       <div className="container max-w-6xl mx-auto flex items-center justify-between py-2 px-4">
         <a href="#" className="flex items-center gap-2">
-          <img src={sikaraLogo} alt="Sikara Mahal" className="h-12 w-auto" width={48} height={48} />
+          <span className="font-display text-xl md:text-2xl font-bold bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent tracking-tight">
+            Sikara Mahal
+          </span>
+          <span className="hidden sm:inline text-xs text-muted-foreground font-medium tracking-widest uppercase">
+            Luxury Wedding Hall
+          </span>
         </a>
 
         {/* Desktop nav */}
@@ -45,7 +49,9 @@ const Navbar = () => {
           </SheetTrigger>
           <SheetContent side="right" className="w-72 bg-card">
             <div className="flex items-center gap-3 mb-6">
-              <img src={sikaraLogo} alt="Sikara Mahal" className="h-10 w-auto" width={40} height={40} />
+              <span className="font-display text-xl font-bold bg-gradient-to-r from-primary via-purple-500 to-primary bg-clip-text text-transparent">
+                Sikara Mahal
+              </span>
             </div>
             <SheetTitle className="sr-only">Menu</SheetTitle>
             <div className="flex flex-col gap-1">
