@@ -38,7 +38,7 @@ const HeroSection = () => {
           className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
         >
           <a
-            href="#packages"
+            href="#hall"
             className="gradient-violet px-8 py-4 rounded-full text-primary-foreground font-semibold text-lg shadow-lg hover:shadow-xl transition-shadow"
           >
             Explore Packages
