@@ -3,7 +3,24 @@ import { hallDurations, additionalCharges, extras, formatPrice } from '@/lib/boo
 import { useBookingStore } from '@/lib/bookingStore';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Info } from 'lucide-react';
+import { Info, Zap, Trash2, Flame, PlugZap, Lightbulb, TreePine, Droplets, Sparkles, PartyPopper, Camera } from 'lucide-react';
+import sikaraLogo from '@/assets/sikara-logo.png';
+
+const extraIcons: Record<string, React.ReactNode> = {
+  'mandapam-light': <Lightbulb className="w-5 h-5 text-primary" />,
+  'lawn-light': <TreePine className="w-5 h-5 text-primary" />,
+  'bubble': <Droplets className="w-5 h-5 text-primary" />,
+  'pyro': <Sparkles className="w-5 h-5 text-primary" />,
+  'paper': <PartyPopper className="w-5 h-5 text-primary" />,
+  'selfie': <Camera className="w-5 h-5 text-primary" />,
+};
+
+const chargeIcons: Record<string, React.ReactNode> = {
+  'electricity': <Zap className="w-5 h-5 text-primary" />,
+  'cleaning': <Trash2 className="w-5 h-5 text-primary" />,
+  'gas': <Flame className="w-5 h-5 text-primary" />,
+  'generator': <PlugZap className="w-5 h-5 text-primary" />,
+};
 
 const HallBookingSection = () => {
   const { hallDuration, setHallDuration, selectedExtras, toggleExtra } = useBookingStore();
@@ -17,12 +34,12 @@ const HallBookingSection = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
+          <img src={sikaraLogo} alt="Sikara Mahal" className="h-20 w-auto mx-auto mb-4" width={80} height={80} />
           <span className="text-primary font-semibold text-sm tracking-widest uppercase">🏛️ Venue</span>
           <h2 className="section-title mt-2">Mandapam Charges</h2>
           <p className="section-subtitle mt-3">Choose your booking duration</p>
         </motion.div>
 
-        {/* Duration Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {hallDurations.map((d, i) => (
             <motion.button
@@ -46,13 +63,12 @@ const HallBookingSection = () => {
           ))}
         </div>
 
-        {/* Additional Charges */}
         <div className="mb-16">
           <h3 className="font-display text-2xl font-bold text-foreground mb-6 text-center">Additional Charges</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {additionalCharges.map((c) => (
               <div key={c.id} className="glass-card p-5 flex items-start gap-3">
-                <span className="text-2xl">{c.icon}</span>
+                {chargeIcons[c.id] || <Zap className="w-5 h-5 text-primary" />}
                 <div className="flex-1">
                   <div className="flex items-center gap-1">
                     <p className="font-semibold text-foreground text-sm">{c.label}</p>
@@ -70,9 +86,8 @@ const HallBookingSection = () => {
           </div>
         </div>
 
-        {/* Extras */}
         <div>
-          <h3 className="font-display text-2xl font-bold text-foreground mb-6 text-center">🎉 Optional Extras</h3>
+          <h3 className="font-display text-2xl font-bold text-foreground mb-6 text-center">✨ Optional Extras</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {extras.map((e) => (
               <label
@@ -85,7 +100,7 @@ const HallBookingSection = () => {
                   checked={selectedExtras.includes(e.id)}
                   onCheckedChange={() => toggleExtra(e.id)}
                 />
-                <span className="text-2xl">{e.icon}</span>
+                {extraIcons[e.id] || <Sparkles className="w-5 h-5 text-primary" />}
                 <div className="flex-1">
                   <p className="font-semibold text-foreground">{e.label}</p>
                   <p className="text-primary font-bold">{formatPrice(e.price)}</p>
