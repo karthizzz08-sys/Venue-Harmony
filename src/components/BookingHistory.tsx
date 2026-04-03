@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 const generateBookingPDF = (b: BookingRecord) => {
   const content = [
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-    '       SIKARA MAHAL - BOOKING RECEIPT',
-    '         Luxury Wedding Hall',
+    ' SIKARA MAHAL - BOOKING RECEIPT',
+    ' Luxury Wedding Hall',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     '',
     `Booking ID: ${b.id}`,
