@@ -11,7 +11,7 @@ const extraIcons: Record<string, React.ReactNode> = {
   'lawn-light': <TreePine className="w-5 h-5 text-primary" />,
   'bubble': <Droplets className="w-5 h-5 text-primary" />,
   'pyro': <Sparkles className="w-5 h-5 text-primary" />,
-  'paper': <Confetti className="w-5 h-5 text-primary" />,
+  'paper': <PartyPopper className="w-5 h-5 text-primary" />,
   'selfie': <Camera className="w-5 h-5 text-primary" />,
 };
 
