@@ -65,7 +65,7 @@ const BookingWizard = () => {
     return items;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!store.customerName || !store.customerPhone || !store.transactionId) {
       toast.error('Please fill in all required fields');
       return;
@@ -79,7 +79,7 @@ const BookingWizard = () => {
       phone: store.customerPhone,
       totalAmount: totalPrice,
       advanceAmount,
-      status: 'pending' as const,
+      status: 'confirmed' as const,
       selections,
     };
     store.addBooking(booking);
@@ -94,10 +94,31 @@ const BookingWizard = () => {
       `💰 *Total: ${formatPrice(totalPrice)}*\n` +
       `💳 *Advance (10%): ${formatPrice(advanceAmount)}*\n` +
       `🧾 Transaction ID: ${store.transactionId}\n\n` +
-      `Payment screenshot attached separately.`
+      (store.paymentScreenshot ? `📎 Payment screenshot: ${store.paymentScreenshot.name}\n\n` : '') +
+      `Please confirm my booking. Thank you!`
     );
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
 
+    // If screenshot exists, try sharing via Web Share API
+    if (store.paymentScreenshot && navigator.share && navigator.canShare) {
+      try {
+        const file = store.paymentScreenshot;
+        const shareData = {
+          text: decodeURIComponent(msg),
+          files: [new File([file], file.name, { type: file.type })],
+        };
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          toast.success('Booking submitted! Screenshot shared.');
+          store.resetSelections();
+          setStep(0);
+          return;
+        }
+      } catch (err) {
+        // User cancelled or share failed, fall through to WhatsApp link
+      }
+    }
+
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank');
     toast.success('Booking submitted! Redirecting to WhatsApp...');
     store.resetSelections();
     setStep(0);
@@ -231,7 +252,6 @@ const BookingWizard = () => {
                   Pay <span className="font-bold text-primary">{formatPrice(advanceAmount)}</span> (10% advance) via UPI
                 </p>
 
-                {/* Real QR Code */}
                 <div className="bg-muted rounded-xl p-6 text-center">
                   <img
                     src={paymentQr}
@@ -283,6 +303,9 @@ const BookingWizard = () => {
                   <p><span className="font-semibold">Total:</span> {formatPrice(totalPrice)}</p>
                   <p><span className="font-semibold">Advance:</span> {formatPrice(advanceAmount)}</p>
                   <p><span className="font-semibold">Txn ID:</span> {store.transactionId}</p>
+                  {store.paymentScreenshot && (
+                    <p><span className="font-semibold">Screenshot:</span> {store.paymentScreenshot.name} ✅</p>
+                  )}
                 </div>
                 <Button
                   onClick={handleSubmit}
