@@ -9,17 +9,17 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Check, ChevronLeft, ChevronRight, Upload, MessageCircle } from 'lucide-react';
+import { CalendarIcon, Check, ChevronLeft, ChevronRight, Upload, MessageCircle, ClipboardList, UserCircle, CreditCard, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import paymentQr from '@/assets/payment-qr.jpeg';
 
-const WHATSAPP_NUMBER = '919876543210'; // Placeholder
+const WHATSAPP_NUMBER = '919876543210';
 
 const BookingWizard = () => {
   const [step, setStep] = useState(0);
   const store = useBookingStore();
 
-  // Calculate total
   const hallPrice = store.hallDuration
     ? hallDurations.find(d => d.id === store.hallDuration)?.price ?? 0
     : 0;
@@ -84,7 +84,6 @@ const BookingWizard = () => {
     };
     store.addBooking(booking);
 
-    // Build WhatsApp message
     const msg = encodeURIComponent(
       `🏛️ *Sikara Mahal Booking*\n\n` +
       `👤 Name: ${store.customerName}\n` +
@@ -105,10 +104,10 @@ const BookingWizard = () => {
   };
 
   const steps = [
-    { title: 'Review Selections', icon: '📋' },
-    { title: 'Your Details', icon: '👤' },
-    { title: 'Payment', icon: '💳' },
-    { title: 'Confirm', icon: '✅' },
+    { title: 'Review', icon: ClipboardList },
+    { title: 'Details', icon: UserCircle },
+    { title: 'Payment', icon: CreditCard },
+    { title: 'Confirm', icon: CheckCircle2 },
   ];
 
   if (totalPrice === 0) {
@@ -131,25 +130,28 @@ const BookingWizard = () => {
 
         {/* Step indicators */}
         <div className="flex items-center justify-center gap-2 mb-10">
-          {steps.map((s, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <button
-                onClick={() => i <= step && setStep(i)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                  i === step
-                    ? 'gradient-violet text-primary-foreground shadow-lg'
-                    : i < step
-                    ? 'bg-primary/20 text-primary'
-                    : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {i < step ? <Check className="w-4 h-4" /> : s.icon}
-              </button>
-              {i < steps.length - 1 && (
-                <div className={`w-8 h-0.5 ${i < step ? 'bg-primary' : 'bg-border'}`} />
-              )}
-            </div>
-          ))}
+          {steps.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <div key={i} className="flex items-center gap-2">
+                <button
+                  onClick={() => i <= step && setStep(i)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                    i === step
+                      ? 'gradient-violet text-primary-foreground shadow-lg'
+                      : i < step
+                      ? 'bg-primary/20 text-primary'
+                      : 'bg-muted text-muted-foreground'
+                  }`}
+                >
+                  {i < step ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                </button>
+                {i < steps.length - 1 && (
+                  <div className={`w-8 h-0.5 ${i < step ? 'bg-primary' : 'bg-border'}`} />
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <AnimatePresence mode="wait">
@@ -160,7 +162,6 @@ const BookingWizard = () => {
             exit={{ opacity: 0, x: -20 }}
             className="glass-card p-8"
           >
-            {/* Step 0: Review */}
             {step === 0 && (
               <div>
                 <h3 className="font-display text-2xl font-bold text-foreground mb-6">Your Selections</h3>
@@ -184,7 +185,6 @@ const BookingWizard = () => {
               </div>
             )}
 
-            {/* Step 1: Details */}
             {step === 1 && (
               <div className="space-y-5">
                 <h3 className="font-display text-2xl font-bold text-foreground mb-6">Your Details</h3>
@@ -224,7 +224,6 @@ const BookingWizard = () => {
               </div>
             )}
 
-            {/* Step 2: Payment */}
             {step === 2 && (
               <div className="space-y-6">
                 <h3 className="font-display text-2xl font-bold text-foreground mb-2">Pay Advance</h3>
@@ -232,12 +231,18 @@ const BookingWizard = () => {
                   Pay <span className="font-bold text-primary">{formatPrice(advanceAmount)}</span> (10% advance) via UPI
                 </p>
 
-                {/* QR Placeholder */}
-                <div className="bg-muted rounded-xl p-8 text-center">
-                  <div className="w-48 h-48 mx-auto bg-card border-2 border-dashed border-border rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">QR Code<br />Coming Soon</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-3">Scan to pay via UPI</p>
+                {/* Real QR Code */}
+                <div className="bg-muted rounded-xl p-6 text-center">
+                  <img
+                    src={paymentQr}
+                    alt="UPI Payment QR Code - KARTHI.M"
+                    className="w-56 h-auto mx-auto rounded-lg"
+                    loading="lazy"
+                    width={224}
+                    height={280}
+                  />
+                  <p className="text-sm text-muted-foreground mt-3">Scan to pay via any UPI app</p>
+                  <p className="text-xs text-muted-foreground mt-1">UPI ID: karthiweb495@okaxis</p>
                 </div>
 
                 <div>
@@ -268,7 +273,6 @@ const BookingWizard = () => {
               </div>
             )}
 
-            {/* Step 3: Confirm */}
             {step === 3 && (
               <div className="text-center space-y-6">
                 <h3 className="font-display text-2xl font-bold text-foreground">Confirm & Send to WhatsApp</h3>
@@ -293,7 +297,6 @@ const BookingWizard = () => {
           </motion.div>
         </AnimatePresence>
 
-        {/* Navigation */}
         <div className="flex justify-between mt-6">
           <Button
             variant="outline"
