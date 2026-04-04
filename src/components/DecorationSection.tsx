@@ -2,17 +2,30 @@ import { motion } from 'framer-motion';
 import { decorationItems, formatPrice } from '@/lib/bookingData';
 import { useBookingStore } from '@/lib/bookingStore';
 import { Checkbox } from '@/components/ui/checkbox';
-import decorStage from '@/assets/decor-stage.jpg';
-import decorEntrance from '@/assets/decor-entrance.jpg';
-import decorTable from '@/assets/decor-table.jpg';
+import { Flower2, DoorOpen, Lamp, Car } from 'lucide-react';
+import decor1 from '@/assets/decor-1.jpg';
+import decor2 from '@/assets/decor-2.jpg';
+import decor3 from '@/assets/decor-3.jpg';
+import decor4 from '@/assets/decor-4.jpg';
+import decor5 from '@/assets/decor-5.jpg';
+import decor6 from '@/assets/decor-6.jpg';
 
 const decorImages: Record<string, string> = {
-  'stage-basic': decorStage,
-  'stage-premium': decorEntrance,
-  'stage-grand': decorStage,
-  'entrance': decorEntrance,
-  'table-decor': decorTable,
-  'car-decor': decorEntrance,
+  'stage-basic': decor6,
+  'stage-premium': decor1,
+  'stage-grand': decor5,
+  'entrance': decor2,
+  'table-decor': decor3,
+  'car-decor': decor4,
+};
+
+const decorIcons: Record<string, React.ReactNode> = {
+  'stage-basic': <Flower2 className="w-5 h-5 text-primary" />,
+  'stage-premium': <Flower2 className="w-5 h-5 text-primary" />,
+  'stage-grand': <Lamp className="w-5 h-5 text-primary" />,
+  'entrance': <DoorOpen className="w-5 h-5 text-primary" />,
+  'table-decor': <Lamp className="w-5 h-5 text-primary" />,
+  'car-decor': <Car className="w-5 h-5 text-primary" />,
 };
 
 const DecorationSection = () => {
@@ -29,17 +42,12 @@ const DecorationSection = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <span className="text-primary font-semibold text-sm tracking-widest uppercase">✨ Decoration</span>
+          <span className="text-primary font-semibold text-sm tracking-widest uppercase">
+            <Flower2 className="inline w-4 h-4 mr-1" /> Decoration
+          </span>
           <h2 className="section-title mt-2">Elegant Decorations</h2>
           <p className="section-subtitle mt-3">Silver & White themed décor for your special day</p>
         </motion.div>
-
-        {/* Showcase images */}
-        <div className="grid grid-cols-3 gap-3 mb-12 rounded-2xl overflow-hidden">
-          <img src={decorStage} alt="Stage decoration" className="w-full h-32 sm:h-48 object-cover" loading="lazy" width={768} height={512} />
-          <img src={decorEntrance} alt="Entrance decoration" className="w-full h-32 sm:h-48 object-cover" loading="lazy" width={768} height={512} />
-          <img src={decorTable} alt="Table decoration" className="w-full h-32 sm:h-48 object-cover" loading="lazy" width={768} height={512} />
-        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {decorationItems.map((item, i) => {
@@ -57,7 +65,7 @@ const DecorationSection = () => {
                 }`}
               >
                 {img && (
-                  <img src={img} alt={item.name} className="w-full h-36 object-cover" loading="lazy" width={768} height={512} />
+                  <img src={img} alt={item.name} className="w-full h-40 object-cover" loading="lazy" width={768} height={512} />
                 )}
                 <div className="p-5 flex items-start gap-4">
                   <Checkbox
@@ -65,7 +73,10 @@ const DecorationSection = () => {
                     onCheckedChange={() => toggleDecoration(item.id)}
                   />
                   <div>
-                    <h3 className="font-display text-lg font-bold text-foreground">{item.name}</h3>
+                    <div className="flex items-center gap-2">
+                      {decorIcons[item.id]}
+                      <h3 className="font-display text-lg font-bold text-foreground">{item.name}</h3>
+                    </div>
                     <p className="text-muted-foreground text-sm mt-1">{item.description}</p>
                     <p className="text-primary font-bold text-xl mt-3">{formatPrice(item.price)}</p>
                   </div>
