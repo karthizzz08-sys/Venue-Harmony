@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBookingStore } from '@/lib/bookingStore';
 import {
-  hallDurations, extras, photoPackages, decorationItems, eventPackage, formatPrice,
+  hallDurations, extras, photoPackages, decorationItems, eventItems,
+  salonPackages, bridalPackages, formatPrice,
 } from '@/lib/bookingData';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -20,26 +21,35 @@ const BookingWizard = () => {
   const [step, setStep] = useState(0);
   const store = useBookingStore();
 
+  // Hall
   const hallPrice = store.hallDuration
     ? hallDurations.find(d => d.id === store.hallDuration)?.price ?? 0
     : 0;
-  const extrasPrice = store.selectedExtras.reduce((sum, id) => {
-    const e = extras.find(x => x.id === id);
-    return sum + (e?.price ?? 0);
-  }, 0);
+  const extrasPrice = store.selectedExtras.reduce((sum, id) => sum + (extras.find(x => x.id === id)?.price ?? 0), 0);
+  // Photo
   const photoPrice = store.photoPackageId
     ? (() => {
         const pkg = photoPackages.find(p => p.id === store.photoPackageId);
         return store.photoEventCount === 1 ? pkg?.pricePerEvent ?? 0 : pkg?.priceFor2Events ?? 0;
       })()
     : 0;
-  const decorPrice = store.selectedDecorations.reduce((sum, id) => {
-    const d = decorationItems.find(x => x.id === id);
-    return sum + (d?.price ?? 0);
+  // Decor
+  const decorPrice = store.selectedDecorations.reduce((sum, id) => sum + (decorationItems.find(x => x.id === id)?.price ?? 0), 0);
+  // Salon
+  const salonTotal = store.selectedSalonIds.reduce((sum, id) => sum + (salonPackages.find(x => x.id === id)?.price ?? 0), 0);
+  // Bridal
+  const bridalTotal = store.selectedBridalIds.reduce((sum, id) => sum + (bridalPackages.find(x => x.id === id)?.price ?? 0), 0);
+  // Event items
+  const eventTotal = store.selectedEventItems.reduce((sum, sel) => {
+    const item = eventItems.find(x => x.id === sel.id);
+    return sum + (item ? item.basePrice * sel.qty : 0);
   }, 0);
-  const eventPrice = store.eventSelected ? store.eventGuestCount * eventPackage.pricePerHead : 0;
-  const totalPrice = hallPrice + extrasPrice + photoPrice + decorPrice + eventPrice;
-  const advanceAmount = Math.round(totalPrice * 0.1);
+
+  // Discount: 30% on event total if >= 1.5L
+  const eventDiscount = eventTotal >= 150000 ? Math.round(eventTotal * 0.3) : 0;
+
+  const grandTotal = hallPrice + extrasPrice + photoPrice + decorPrice + salonTotal + bridalTotal + eventTotal - eventDiscount;
+  const advanceAmount = Math.round(grandTotal * 0.1);
 
   const getSelectionSummary = () => {
     const items: string[] = [];
@@ -59,9 +69,19 @@ const BookingWizard = () => {
       const d = decorationItems.find(x => x.id === id);
       if (d) items.push(`Decoration: ${d.name}`);
     });
-    if (store.eventSelected) {
-      items.push(`Event Package: ${store.eventGuestCount} guests`);
-    }
+    store.selectedSalonIds.forEach(id => {
+      const s = salonPackages.find(x => x.id === id);
+      if (s) items.push(`Salon: ${s.name}`);
+    });
+    store.selectedBridalIds.forEach(id => {
+      const b = bridalPackages.find(x => x.id === id);
+      if (b) items.push(`Bridal: ${b.name} (${b.type})`);
+    });
+    store.selectedEventItems.forEach(sel => {
+      const e = eventItems.find(x => x.id === sel.id);
+      if (e) items.push(`Event: ${e.name} x${sel.qty}`);
+    });
+    if (eventDiscount > 0) items.push(`Discount (30% on Event): -${formatPrice(eventDiscount)}`);
     return items;
   };
 
@@ -77,10 +97,11 @@ const BookingWizard = () => {
       date: store.eventDate ? format(store.eventDate, 'dd/MM/yyyy') : 'TBD',
       customerName: store.customerName,
       phone: store.customerPhone,
-      totalAmount: totalPrice,
+      totalAmount: grandTotal,
       advanceAmount,
       status: 'confirmed' as const,
       selections,
+      discount: eventDiscount,
     };
     store.addBooking(booking);
 
@@ -91,14 +112,13 @@ const BookingWizard = () => {
       `📧 Email: ${store.customerEmail || 'N/A'}\n` +
       `📅 Date: ${booking.date}\n\n` +
       `📋 *Selections:*\n${selections.map(s => `• ${s}`).join('\n')}\n\n` +
-      `💰 *Total: ${formatPrice(totalPrice)}*\n` +
+      `💰 *Total: ${formatPrice(grandTotal)}*\n` +
       `💳 *Advance (10%): ${formatPrice(advanceAmount)}*\n` +
       `🧾 Transaction ID: ${store.transactionId}\n\n` +
       (store.paymentScreenshot ? `📎 Payment screenshot: ${store.paymentScreenshot.name}\n\n` : '') +
       `Please confirm my booking. Thank you!`
     );
 
-    // If screenshot exists, try sharing via Web Share API
     if (store.paymentScreenshot && navigator.share && navigator.canShare) {
       try {
         const file = store.paymentScreenshot;
@@ -113,8 +133,8 @@ const BookingWizard = () => {
           setStep(0);
           return;
         }
-      } catch (err) {
-        // User cancelled or share failed, fall through to WhatsApp link
+      } catch {
+        // fall through
       }
     }
 
@@ -131,14 +151,12 @@ const BookingWizard = () => {
     { title: 'Confirm', icon: CheckCircle2 },
   ];
 
-  if (totalPrice === 0) {
+  if (grandTotal === 0) {
     return (
       <section id="booking" className="py-20 px-4">
         <div className="container max-w-2xl mx-auto text-center">
           <h2 className="section-title">Book Now</h2>
-          <p className="text-muted-foreground mt-4">
-            Please select at least one package above to start your booking.
-          </p>
+          <p className="text-muted-foreground mt-4">Please select at least one package above to start your booking.</p>
         </div>
       </section>
     );
@@ -149,7 +167,6 @@ const BookingWizard = () => {
       <div className="container max-w-2xl mx-auto">
         <h2 className="section-title text-center mb-8">Book Now</h2>
 
-        {/* Step indicators */}
         <div className="flex items-center justify-center gap-2 mb-10">
           {steps.map((s, i) => {
             const Icon = s.icon;
@@ -158,31 +175,21 @@ const BookingWizard = () => {
                 <button
                   onClick={() => i <= step && setStep(i)}
                   className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
-                    i === step
-                      ? 'gradient-violet text-primary-foreground shadow-lg'
-                      : i < step
-                      ? 'bg-primary/20 text-primary'
-                      : 'bg-muted text-muted-foreground'
+                    i === step ? 'gradient-violet text-primary-foreground shadow-lg'
+                    : i < step ? 'bg-primary/20 text-primary'
+                    : 'bg-muted text-muted-foreground'
                   }`}
                 >
                   {i < step ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
                 </button>
-                {i < steps.length - 1 && (
-                  <div className={`w-8 h-0.5 ${i < step ? 'bg-primary' : 'bg-border'}`} />
-                )}
+                {i < steps.length - 1 && <div className={`w-8 h-0.5 ${i < step ? 'bg-primary' : 'bg-border'}`} />}
               </div>
             );
           })}
         </div>
 
         <AnimatePresence mode="wait">
-          <motion.div
-            key={step}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="glass-card p-8"
-          >
+          <motion.div key={step} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="glass-card p-8">
             {step === 0 && (
               <div>
                 <h3 className="font-display text-2xl font-bold text-foreground mb-6">Your Selections</h3>
@@ -193,12 +200,18 @@ const BookingWizard = () => {
                     </li>
                   ))}
                 </ul>
-                <div className="border-t border-border pt-4">
+                <div className="border-t border-border pt-4 space-y-2">
+                  {eventDiscount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Event Discount (30%)</span>
+                      <span className="font-semibold text-destructive">-{formatPrice(eventDiscount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-lg">
-                    <span className="font-semibold text-foreground">Total</span>
-                    <span className="font-bold text-primary text-2xl">{formatPrice(totalPrice)}</span>
+                    <span className="font-semibold text-foreground">Grand Total</span>
+                    <span className="font-bold text-primary text-2xl">{formatPrice(grandTotal)}</span>
                   </div>
-                  <div className="flex justify-between text-sm mt-2">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Advance (10%)</span>
                     <span className="font-semibold text-foreground">{formatPrice(advanceAmount)}</span>
                   </div>
@@ -231,14 +244,7 @@ const BookingWizard = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={store.eventDate ?? undefined}
-                        onSelect={(d) => store.setEventDate(d ?? null)}
-                        disabled={(date) => date < new Date()}
-                        initialFocus
-                        className="p-3 pointer-events-auto"
-                      />
+                      <Calendar mode="single" selected={store.eventDate ?? undefined} onSelect={(d) => store.setEventDate(d ?? null)} disabled={(date) => date < new Date()} initialFocus className="p-3 pointer-events-auto" />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -251,20 +257,11 @@ const BookingWizard = () => {
                 <p className="text-muted-foreground">
                   Pay <span className="font-bold text-primary">{formatPrice(advanceAmount)}</span> (10% advance) via UPI
                 </p>
-
                 <div className="bg-muted rounded-xl p-6 text-center">
-                  <img
-                    src={paymentQr}
-                    alt="UPI Payment QR Code - KARTHI.M"
-                    className="w-56 h-auto mx-auto rounded-lg"
-                    loading="lazy"
-                    width={224}
-                    height={280}
-                  />
+                  <img src={paymentQr} alt="UPI Payment QR Code" className="w-56 h-auto mx-auto rounded-lg" loading="lazy" width={224} height={280} />
                   <p className="text-sm text-muted-foreground mt-3">Scan to pay via any UPI app</p>
                   <p className="text-xs text-muted-foreground mt-1">UPI ID: karthiweb495@okaxis</p>
                 </div>
-
                 <div>
                   <label className="text-sm font-semibold text-foreground">Upload Payment Screenshot *</label>
                   <label className="mt-2 flex items-center gap-3 p-4 bg-muted rounded-lg border-2 border-dashed border-border cursor-pointer hover:border-primary transition-colors">
@@ -272,23 +269,12 @@ const BookingWizard = () => {
                     <span className="text-sm text-muted-foreground">
                       {store.paymentScreenshot ? store.paymentScreenshot.name : 'Click to upload screenshot'}
                     </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => store.setPaymentScreenshot(e.target.files?.[0] ?? null)}
-                    />
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => store.setPaymentScreenshot(e.target.files?.[0] ?? null)} />
                   </label>
                 </div>
-
                 <div>
                   <label className="text-sm font-semibold text-foreground">Transaction ID *</label>
-                  <Input
-                    value={store.transactionId}
-                    onChange={e => store.setTransactionId(e.target.value)}
-                    placeholder="Enter UPI Transaction ID"
-                    className="mt-1"
-                  />
+                  <Input value={store.transactionId} onChange={e => store.setTransactionId(e.target.value)} placeholder="Enter UPI Transaction ID" className="mt-1" />
                 </div>
               </div>
             )}
@@ -300,18 +286,13 @@ const BookingWizard = () => {
                   <p><span className="font-semibold">Name:</span> {store.customerName}</p>
                   <p><span className="font-semibold">Phone:</span> {store.customerPhone}</p>
                   <p><span className="font-semibold">Date:</span> {store.eventDate ? format(store.eventDate, 'PPP') : 'TBD'}</p>
-                  <p><span className="font-semibold">Total:</span> {formatPrice(totalPrice)}</p>
+                  <p><span className="font-semibold">Total:</span> {formatPrice(grandTotal)}</p>
+                  {eventDiscount > 0 && <p><span className="font-semibold">Discount:</span> -{formatPrice(eventDiscount)}</p>}
                   <p><span className="font-semibold">Advance:</span> {formatPrice(advanceAmount)}</p>
                   <p><span className="font-semibold">Txn ID:</span> {store.transactionId}</p>
-                  {store.paymentScreenshot && (
-                    <p><span className="font-semibold">Screenshot:</span> {store.paymentScreenshot.name} ✅</p>
-                  )}
+                  {store.paymentScreenshot && <p><span className="font-semibold">Screenshot:</span> {store.paymentScreenshot.name} ✅</p>}
                 </div>
-                <Button
-                  onClick={handleSubmit}
-                  className="gradient-violet text-primary-foreground px-8 py-6 text-lg rounded-full"
-                  size="lg"
-                >
+                <Button onClick={handleSubmit} className="gradient-violet text-primary-foreground px-8 py-6 text-lg rounded-full" size="lg">
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Submit & Send to WhatsApp
                 </Button>
@@ -321,18 +302,11 @@ const BookingWizard = () => {
         </AnimatePresence>
 
         <div className="flex justify-between mt-6">
-          <Button
-            variant="outline"
-            onClick={() => setStep(s => Math.max(0, s - 1))}
-            disabled={step === 0}
-          >
+          <Button variant="outline" onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0}>
             <ChevronLeft className="w-4 h-4 mr-1" /> Back
           </Button>
           {step < 3 && (
-            <Button
-              onClick={() => setStep(s => Math.min(3, s + 1))}
-              className="gradient-violet text-primary-foreground"
-            >
+            <Button onClick={() => setStep(s => Math.min(3, s + 1))} className="gradient-violet text-primary-foreground">
               Next <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           )}

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useBookingStore, BookingRecord } from '@/lib/bookingStore';
 import { formatPrice } from '@/lib/bookingData';
-import { Download, CheckCircle2 } from 'lucide-react';
+import { Download, CheckCircle2, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const generateBookingPDF = (b: BookingRecord) => {
@@ -24,6 +24,7 @@ const generateBookingPDF = (b: BookingRecord) => {
     '',
     '── Payment Summary ──────────────────',
     `Total Amount: ${formatPrice(b.totalAmount)}`,
+    ...(b.discount > 0 ? [`Discount Applied: -${formatPrice(b.discount)}`] : []),
     `Advance Paid (10%): ${formatPrice(b.advanceAmount)}`,
     `Balance Due: ${formatPrice(b.totalAmount - b.advanceAmount)}`,
     '',
@@ -32,7 +33,7 @@ const generateBookingPDF = (b: BookingRecord) => {
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
   ].join('\n');
 
-  const blob = new Blob([content], { type: 'application/pdf' });
+  const blob = new Blob([content], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -42,9 +43,14 @@ const generateBookingPDF = (b: BookingRecord) => {
 };
 
 const BookingHistory = () => {
-  const { bookingHistory } = useBookingStore();
+  const { bookingHistory, customerPhone } = useBookingStore();
 
-  if (bookingHistory.length === 0) return null;
+  // Show only bookings matching current user's phone (if they entered one)
+  const userBookings = customerPhone
+    ? bookingHistory.filter(b => b.phone === customerPhone)
+    : bookingHistory;
+
+  if (userBookings.length === 0) return null;
 
   return (
     <section id="history" className="py-20 px-4 bg-secondary/30">
@@ -56,20 +62,20 @@ const BookingHistory = () => {
           className="text-center mb-10"
         >
           <span className="text-primary font-semibold text-sm tracking-widest uppercase">
-            <ClipboardIcon className="inline w-4 h-4 mr-1" /> History
+            <ClipboardList className="inline w-4 h-4 mr-1" /> History
           </span>
           <h2 className="section-title mt-2">Your Booking History</h2>
         </motion.div>
 
         <div className="space-y-4">
-          {bookingHistory.map((b) => (
+          {userBookings.map((b) => (
             <div key={b.id} className="glass-card p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div>
                   <h3 className="font-display text-lg font-bold text-foreground">{b.customerName}</h3>
                   <p className="text-muted-foreground text-sm">📅 {b.date} • 📱 {b.phone}</p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 flex items-center gap-1 w-fit">
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-accent text-primary flex items-center gap-1 w-fit">
                   <CheckCircle2 className="w-3 h-3" />
                   Successfully Booked
                 </span>
@@ -81,6 +87,7 @@ const BookingHistory = () => {
               </ul>
               <div className="flex flex-wrap items-center gap-4 text-sm border-t border-border pt-3">
                 <span>Total: <strong className="text-primary">{formatPrice(b.totalAmount)}</strong></span>
+                {b.discount > 0 && <span>Discount: <strong className="text-destructive">-{formatPrice(b.discount)}</strong></span>}
                 <span>Advance: <strong>{formatPrice(b.advanceAmount)}</strong></span>
                 <Button
                   variant="outline"
@@ -99,11 +106,5 @@ const BookingHistory = () => {
     </section>
   );
 };
-
-const ClipboardIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
-  </svg>
-);
 
 export default BookingHistory;

@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useBookingStore } from '@/lib/bookingStore';
-import { hallDurations, extras, photoPackages, decorationItems, eventPackage, formatPrice } from '@/lib/bookingData';
+import {
+  hallDurations, extras, photoPackages, decorationItems, eventItems,
+  salonPackages, bridalPackages, formatPrice,
+} from '@/lib/bookingData';
 
 const FloatingTotal = () => {
   const store = useBookingStore();
   const [visible, setVisible] = useState(false);
 
-  const hallPrice = store.hallDuration
-    ? hallDurations.find(d => d.id === store.hallDuration)?.price ?? 0
-    : 0;
+  const hallPrice = store.hallDuration ? hallDurations.find(d => d.id === store.hallDuration)?.price ?? 0 : 0;
   const extrasPrice = store.selectedExtras.reduce((sum, id) => sum + (extras.find(x => x.id === id)?.price ?? 0), 0);
   const photoPrice = store.photoPackageId
     ? (() => {
@@ -18,8 +19,14 @@ const FloatingTotal = () => {
       })()
     : 0;
   const decorPrice = store.selectedDecorations.reduce((sum, id) => sum + (decorationItems.find(x => x.id === id)?.price ?? 0), 0);
-  const eventPrice = store.eventSelected ? store.eventGuestCount * eventPackage.pricePerHead : 0;
-  const total = hallPrice + extrasPrice + photoPrice + decorPrice + eventPrice;
+  const salonTotal = store.selectedSalonIds.reduce((sum, id) => sum + (salonPackages.find(x => x.id === id)?.price ?? 0), 0);
+  const bridalTotal = store.selectedBridalIds.reduce((sum, id) => sum + (bridalPackages.find(x => x.id === id)?.price ?? 0), 0);
+  const eventTotal = store.selectedEventItems.reduce((sum, sel) => {
+    const item = eventItems.find(x => x.id === sel.id);
+    return sum + (item ? item.basePrice * sel.qty : 0);
+  }, 0);
+  const eventDiscount = eventTotal >= 150000 ? Math.round(eventTotal * 0.3) : 0;
+  const total = hallPrice + extrasPrice + photoPrice + decorPrice + salonTotal + bridalTotal + eventTotal - eventDiscount;
 
   useEffect(() => {
     setVisible(total > 0);
@@ -37,11 +44,11 @@ const FloatingTotal = () => {
         <div>
           <p className="text-primary-foreground/80 text-sm">Estimated Total</p>
           <p className="text-primary-foreground text-2xl font-bold font-display">{formatPrice(total)}</p>
+          {eventDiscount > 0 && (
+            <p className="text-primary-foreground/70 text-xs">Incl. 30% event discount</p>
+          )}
         </div>
-        <a
-          href="#booking"
-          className="bg-primary-foreground text-primary px-6 py-3 rounded-full font-bold hover:bg-primary-foreground/90 transition-colors"
-        >
+        <a href="#booking" className="bg-primary-foreground text-primary px-6 py-3 rounded-full font-bold hover:bg-primary-foreground/90 transition-colors">
           Book Now →
         </a>
       </div>
