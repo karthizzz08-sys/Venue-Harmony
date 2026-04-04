@@ -1,5 +1,22 @@
 import { create } from 'zustand';
 
+export interface BookingRecord {
+  id: string;
+  date: string;
+  customerName: string;
+  phone: string;
+  totalAmount: number;
+  advanceAmount: number;
+  status: 'pending' | 'confirmed' | 'completed';
+  selections: string[];
+  discount: number;
+}
+
+export interface EventItemSelection {
+  id: string;
+  qty: number;
+}
+
 export interface BookingState {
   // Hall
   hallDuration: string | null;
@@ -9,9 +26,12 @@ export interface BookingState {
   photoEventCount: 1 | 2;
   // Decoration
   selectedDecorations: string[];
-  // Events
-  eventSelected: boolean;
-  eventGuestCount: number;
+  // Salon
+  selectedSalonIds: string[];
+  // Bridal
+  selectedBridalIds: string[];
+  // Event items (detailed)
+  selectedEventItems: EventItemSelection[];
   // Payment
   transactionId: string;
   paymentScreenshot: File | null;
@@ -28,8 +48,10 @@ export interface BookingState {
   setPhotoPackage: (id: string | null) => void;
   setPhotoEventCount: (count: 1 | 2) => void;
   toggleDecoration: (id: string) => void;
-  setEventSelected: (v: boolean) => void;
-  setEventGuestCount: (n: number) => void;
+  toggleSalon: (id: string) => void;
+  toggleBridal: (id: string) => void;
+  toggleEventItem: (id: string) => void;
+  setEventItemQty: (id: string, qty: number) => void;
   setTransactionId: (id: string) => void;
   setPaymentScreenshot: (f: File | null) => void;
   setCustomerName: (n: string) => void;
@@ -40,18 +62,6 @@ export interface BookingState {
   resetSelections: () => void;
 }
 
-export interface BookingRecord {
-  id: string;
-  date: string;
-  customerName: string;
-  phone: string;
-  totalAmount: number;
-  advanceAmount: number;
-  status: 'pending' | 'confirmed' | 'completed';
-  selections: string[];
-}
-
-// Load booking history from localStorage
 const loadHistory = (): BookingRecord[] => {
   try {
     const saved = localStorage.getItem('sikara-bookings');
@@ -65,8 +75,9 @@ export const useBookingStore = create<BookingState>((set) => ({
   photoPackageId: null,
   photoEventCount: 1,
   selectedDecorations: [],
-  eventSelected: false,
-  eventGuestCount: 500,
+  selectedSalonIds: [],
+  selectedBridalIds: [],
+  selectedEventItems: [],
   transactionId: '',
   paymentScreenshot: null,
   customerName: '',
@@ -88,8 +99,26 @@ export const useBookingStore = create<BookingState>((set) => ({
       ? s.selectedDecorations.filter(d => d !== id)
       : [...s.selectedDecorations, id]
   })),
-  setEventSelected: (v) => set({ eventSelected: v }),
-  setEventGuestCount: (n) => set({ eventGuestCount: n }),
+  toggleSalon: (id) => set((s) => ({
+    selectedSalonIds: s.selectedSalonIds.includes(id)
+      ? s.selectedSalonIds.filter(x => x !== id)
+      : [...s.selectedSalonIds, id]
+  })),
+  toggleBridal: (id) => set((s) => ({
+    selectedBridalIds: s.selectedBridalIds.includes(id)
+      ? s.selectedBridalIds.filter(x => x !== id)
+      : [...s.selectedBridalIds, id]
+  })),
+  toggleEventItem: (id) => set((s) => {
+    const exists = s.selectedEventItems.find(x => x.id === id);
+    if (exists) {
+      return { selectedEventItems: s.selectedEventItems.filter(x => x.id !== id) };
+    }
+    return { selectedEventItems: [...s.selectedEventItems, { id, qty: 1 }] };
+  }),
+  setEventItemQty: (id, qty) => set((s) => ({
+    selectedEventItems: s.selectedEventItems.map(x => x.id === id ? { ...x, qty } : x)
+  })),
   setTransactionId: (id) => set({ transactionId: id }),
   setPaymentScreenshot: (f) => set({ paymentScreenshot: f }),
   setCustomerName: (n) => set({ customerName: n }),
@@ -107,8 +136,9 @@ export const useBookingStore = create<BookingState>((set) => ({
     photoPackageId: null,
     photoEventCount: 1,
     selectedDecorations: [],
-    eventSelected: false,
-    eventGuestCount: 500,
+    selectedSalonIds: [],
+    selectedBridalIds: [],
+    selectedEventItems: [],
     transactionId: '',
     paymentScreenshot: null,
     customerName: '',

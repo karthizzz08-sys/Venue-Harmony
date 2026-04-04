@@ -36,15 +36,89 @@ export interface DecorationItem {
   price: number;
   description: string;
   icon: string;
+  image?: string;
 }
 
-export interface EventPackage {
+// ─── SALON ───
+export interface SalonPackage {
   id: string;
   name: string;
-  pricePerHead: number;
-  guestCount: number;
-  sections: { title: string; items: string[] }[];
+  price: number;
+  includes: string[];
 }
+
+export const salonPackages: SalonPackage[] = [
+  {
+    id: 'normal-makeup',
+    name: 'Normal Make Up',
+    price: 14999,
+    includes: ['Makeup', 'Gold Facial', 'Waxing', 'Manicure & Pedicure', 'Threading', 'Hair Spa', 'Hair Cut'],
+  },
+  {
+    id: 'hd-makeup',
+    name: 'HD Make Up',
+    price: 29999,
+    includes: ['HD Makeup', 'O3+ Facial', 'Full Waxing', 'Manicure & Pedicure', 'Threading', 'Hair Spa'],
+  },
+  {
+    id: 'traditional-makeup',
+    name: 'Traditional Make Up',
+    price: 21999,
+    includes: ['VLCC Diamond Facial', 'Full Waxing', 'Manicure & Pedicure', 'Threading', 'Upper Lip', 'Hair Spa', 'Jewellery Set', 'Mehndi'],
+  },
+];
+
+// ─── BRIDAL PACKAGES ───
+export interface BridalPackage {
+  id: string;
+  name: string;
+  price: number;
+  type: 'groom' | 'bride';
+}
+
+export const bridalPackages: BridalPackage[] = [
+  { id: 'groom-basic', name: 'Basic', price: 2000, type: 'groom' },
+  { id: 'groom-premium', name: 'Premium', price: 4999, type: 'groom' },
+  { id: 'groom-custom', name: 'Custom', price: 12999, type: 'groom' },
+  { id: 'bride-basic', name: 'Basic', price: 12000, type: 'bride' },
+  { id: 'bride-platinum', name: 'Platinum', price: 18999, type: 'bride' },
+  { id: 'bride-elite', name: 'Elite', price: 24999, type: 'bride' },
+  { id: 'bride-creative', name: 'Creative', price: 34999, type: 'bride' },
+];
+
+// ─── EVENT ITEMS (detailed) ───
+export interface EventItem {
+  id: string;
+  name: string;
+  basePrice: number;
+  unit: string;
+  defaultQty: number;
+  minQty: number;
+  category: string;
+}
+
+export const eventItems: EventItem[] = [
+  // Welcome Setup
+  { id: 'welcome-girls', name: 'Welcome Girls', basePrice: 2000, unit: 'per girl', defaultQty: 1, minQty: 1, category: 'Welcome Setup' },
+  { id: 'welcome-drinks', name: 'Welcome Drinks (Coffee/Tea/Buttermilk/Juice)', basePrice: 2000, unit: 'per 100 nos', defaultQty: 1, minQty: 1, category: 'Welcome Setup' },
+  { id: 'welcome-crackers', name: 'Welcome Crackers', basePrice: 1500, unit: 'per 2 nos', defaultQty: 1, minQty: 1, category: 'Welcome Setup' },
+  // Plates & Entry
+  { id: 'valai-maram', name: 'Valai Maram', basePrice: 2000, unit: 'fixed', defaultQty: 1, minQty: 1, category: 'Plates & Entry' },
+  { id: 'seer-plate', name: 'Seer Plate / Named Plate', basePrice: 500, unit: 'per plate', defaultQty: 1, minQty: 1, category: 'Plates & Entry' },
+  { id: 'karbedu-plate', name: 'Karbedu Plate', basePrice: 100, unit: 'per plate', defaultQty: 1, minQty: 1, category: 'Plates & Entry' },
+  { id: 'chocolate-plate', name: 'Chocolate Plate', basePrice: 150, unit: 'per plate', defaultQty: 1, minQty: 1, category: 'Plates & Entry' },
+  { id: 'cream-plate', name: 'Cream Plate', basePrice: 250, unit: 'per plate', defaultQty: 1, minQty: 1, category: 'Plates & Entry' },
+  { id: 'flower-pot', name: 'Flower Pot (Welcome Table)', basePrice: 500, unit: 'fixed', defaultQty: 1, minQty: 1, category: 'Plates & Entry' },
+  // Decorations & Effects
+  { id: 'outer-lighting', name: 'Outer Lighting', basePrice: 10000, unit: 'fixed', defaultQty: 1, minQty: 1, category: 'Decorations & Effects' },
+  { id: 'dj-dance', name: 'DJ & Dance', basePrice: 35000, unit: 'fixed', defaultQty: 1, minQty: 1, category: 'Decorations & Effects' },
+  { id: 'chariot-entry', name: 'Chariot Entry', basePrice: 35000, unit: 'fixed', defaultQty: 1, minQty: 1, category: 'Decorations & Effects' },
+  { id: 'pyro-blast', name: 'Pyro Blast', basePrice: 1500, unit: 'per burst', defaultQty: 1, minQty: 1, category: 'Decorations & Effects' },
+  { id: 'bubble-effect', name: 'Bubble Effect', basePrice: 1500, unit: 'fixed', defaultQty: 1, minQty: 1, category: 'Decorations & Effects' },
+  { id: 'ice-smoke-entry', name: 'Ice Smoke Entry', basePrice: 5000, unit: 'fixed', defaultQty: 1, minQty: 1, category: 'Decorations & Effects' },
+];
+
+// ─── EXISTING DATA ───
 
 export const hallDurations: HallDuration[] = [
   { id: '4hrs', label: '4 Hours', timing: 'Flexible timing', price: 25000 },
@@ -75,10 +149,7 @@ export const photoPackages: PhotoPackage[] = [
     tier: 'silver',
     pricePerEvent: 8000,
     priceFor2Events: 12000,
-    features: [
-      'Traditional Photographer (1)',
-      'Fully digital photos in pendrive',
-    ],
+    features: ['Traditional Photographer (1)', 'Fully digital photos in pendrive'],
   },
   {
     id: 'gold',
@@ -86,12 +157,7 @@ export const photoPackages: PhotoPackage[] = [
     tier: 'gold',
     pricePerEvent: 25000,
     priceFor2Events: 40000,
-    features: [
-      'Traditional Photographer (1)',
-      'Traditional Videographer (1)',
-      'Full-length 4K video + photos in pendrive',
-      'Premium Canva Album (1)',
-    ],
+    features: ['Traditional Photographer (1)', 'Traditional Videographer (1)', 'Full-length 4K video + photos in pendrive', 'Premium Canva Album (1)'],
     badge: 'Popular',
   },
   {
@@ -100,14 +166,7 @@ export const photoPackages: PhotoPackage[] = [
     tier: 'platinum',
     pricePerEvent: 50000,
     priceFor2Events: 80000,
-    features: [
-      'Traditional Photographer (1)',
-      'Traditional Videographer (1)',
-      'Candid Photographer (1)',
-      'Drone + TV (2 nos)',
-      'Full-length 4K video + photos',
-      'Premium Canva Album',
-    ],
+    features: ['Traditional Photographer (1)', 'Traditional Videographer (1)', 'Candid Photographer (1)', 'Drone + TV (2 nos)', 'Full-length 4K video + photos', 'Premium Canva Album'],
     badge: 'Best Value',
   },
   {
@@ -116,18 +175,7 @@ export const photoPackages: PhotoPackage[] = [
     tier: 'diamond',
     pricePerEvent: 80000,
     priceFor2Events: 120000,
-    features: [
-      'Traditional Photographer (1)',
-      'Traditional Videographer (1)',
-      'Candid Photographer (1)',
-      'Drone + TV (2 nos)',
-      'Pre/Post wedding shoot (1 day)',
-      'Full-length 4K video + photos',
-      'Premium Canva Album (enhanced)',
-      'Cinematic story invitation',
-      'Special proposal event',
-      'Digital invitation',
-    ],
+    features: ['Traditional Photographer (1)', 'Traditional Videographer (1)', 'Candid Photographer (1)', 'Drone + TV (2 nos)', 'Pre/Post wedding shoot (1 day)', 'Full-length 4K video + photos', 'Premium Canva Album (enhanced)', 'Cinematic story invitation', 'Special proposal event', 'Digital invitation'],
     badge: 'Premium',
   },
 ];
@@ -140,43 +188,6 @@ export const decorationItems: DecorationItem[] = [
   { id: 'table-decor', name: 'Table Centerpieces', price: 8000, description: 'Elegant table arrangements (all tables)', icon: '🕯️' },
   { id: 'car-decor', name: 'Wedding Car Decoration', price: 5000, description: 'Beautiful car décor with flowers & ribbons', icon: '🚗' },
 ];
-
-export const eventPackage: EventPackage = {
-  id: 'premium',
-  name: 'Premium Engagement / Wedding Package',
-  pricePerHead: 750,
-  guestCount: 500,
-  sections: [
-    {
-      title: '🎉 Grand Welcome',
-      items: ['Valai Maram', 'Santhanam, Kumkumam', 'Paneer, Kalkandu, Rose', 'Welcome Girl'],
-    },
-    {
-      title: '🍵 Welcome Drinks (250 Nos)',
-      items: ['Tea', 'Coffee', 'Valai Thandu Soup', 'Vazhaipoo Vada', 'Kara Paniyaram'],
-    },
-    {
-      title: '🎂 Cake Cutting',
-      items: ['Special Cake Cutting Arrangement'],
-    },
-    {
-      title: '🌸 Decoration',
-      items: ['Fully Artificial Decoration', 'Welcome Board (customized)'],
-    },
-    {
-      title: '📸 Photography & Videography',
-      items: ['Traditional Photographer (1)', 'Traditional Videographer (1)', 'Bubble Burst during ring exchange', 'Premium Canva Album (40 pages)', 'Pendrive with all photos & 4K video'],
-    },
-    {
-      title: '🍽️ Grand Lunch (500 Nos)',
-      items: ['Bread Halwa', 'Fried Egg', 'Seeraga Samba Chicken Biryani', 'Elumbu Thalicha', 'Puli Kathrika', 'Chicken 65 / Chicken Gravy', 'Onion Raitha', 'Curd Rice with Fruits', 'Urugai & Vathal', 'Water Bottle + Elai + Paper Roll', 'Hot Badham Paal', 'Ice Cream', 'Vethalai + Pakku + Gulkand / Sweet Beeda'],
-    },
-    {
-      title: '🏛️ Hall Inclusions',
-      items: ['A/C Mandapam', 'Cleaning charges', 'EB charges', 'Gas', 'Generator'],
-    },
-  ],
-};
 
 export function formatPrice(amount: number): string {
   return '₹' + amount.toLocaleString('en-IN');
