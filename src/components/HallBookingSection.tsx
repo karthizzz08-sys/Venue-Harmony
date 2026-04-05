@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { hallDurations, additionalCharges, extras, formatPrice } from '@/lib/bookingData';
+import { hallDurations, additionalCharges, formatPrice } from '@/lib/bookingData';
 import { useBookingStore } from '@/lib/bookingStore';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
