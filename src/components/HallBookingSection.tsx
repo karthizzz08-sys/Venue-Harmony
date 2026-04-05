@@ -3,7 +3,7 @@ import { hallDurations, additionalCharges, formatPrice } from '@/lib/bookingData
 import { useBookingStore } from '@/lib/bookingStore';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Info, Zap, Trash2, Flame, PlugZap, Lightbulb, TreePine, Droplets, Sparkles, PartyPopper, Camera } from 'lucide-react';
+import { Info, Zap, Trash2, Flame, PlugZap } from 'lucide-react';
 import sikaraLogo from '@/assets/sikara-logo.png';
 
 const extraIcons: Record<string, React.ReactNode> = {
