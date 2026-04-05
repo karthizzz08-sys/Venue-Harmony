@@ -23,7 +23,7 @@ const chargeIcons: Record<string, React.ReactNode> = {
 };
 
 const HallBookingSection = () => {
-  const { hallDuration, setHallDuration, selectedExtras, toggleExtra } = useBookingStore();
+  const { hallDuration, setHallDuration } = useBookingStore();
 
   return (
     <section id="hall" className="py-20 px-4">
