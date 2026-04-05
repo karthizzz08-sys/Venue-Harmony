@@ -6,14 +6,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { Info, Zap, Trash2, Flame, PlugZap } from 'lucide-react';
 import sikaraLogo from '@/assets/sikara-logo.png';
 
-const extraIcons: Record<string, React.ReactNode> = {
-  'mandapam-light': <Lightbulb className="w-5 h-5 text-primary" />,
-  'lawn-light': <TreePine className="w-5 h-5 text-primary" />,
-  'bubble': <Droplets className="w-5 h-5 text-primary" />,
-  'pyro': <Sparkles className="w-5 h-5 text-primary" />,
-  'paper': <PartyPopper className="w-5 h-5 text-primary" />,
-  'selfie': <Camera className="w-5 h-5 text-primary" />,
-};
 
 const chargeIcons: Record<string, React.ReactNode> = {
   'electricity': <Zap className="w-5 h-5 text-primary" />,

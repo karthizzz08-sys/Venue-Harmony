@@ -5,7 +5,6 @@ import HallBookingSection from '@/components/HallBookingSection';
 import PhotographySection from '@/components/PhotographySection';
 import DecorationSection from '@/components/DecorationSection';
 import SalonSection from '@/components/SalonSection';
-import BridalSection from '@/components/BridalSection';
 import EventDetailSection from '@/components/EventDetailSection';
 import DJSection from '@/components/DJSection';
 import BookingWizard from '@/components/BookingWizard';
@@ -22,7 +21,6 @@ const Index = () => {
       <PhotographySection />
       <DecorationSection />
       <SalonSection />
-      <BridalSection />
       <EventDetailSection />
       <DJSection />
       <BookingWizard />
@@ -41,7 +39,7 @@ const Index = () => {
             <a href="#hall" className="hover:text-primary-foreground transition-colors">Hall</a>
             <a href="#photography" className="hover:text-primary-foreground transition-colors">Photography</a>
             <a href="#decoration" className="hover:text-primary-foreground transition-colors">Decoration</a>
-            <a href="#salon" className="hover:text-primary-foreground transition-colors">Salon</a>
+            <a href="#salon" className="hover:text-primary-foreground transition-colors">Bridal</a>
             <a href="#events" className="hover:text-primary-foreground transition-colors">Events</a>
           </div>
           <p className="text-primary-foreground/30 text-xs mt-8">

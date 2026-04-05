@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBookingStore } from '@/lib/bookingStore';
 import {
-  hallDurations, extras, photoPackages, decorationItems, eventItems,
+  hallDurations, photoPackages, decorationItems, eventItems,
   salonPackages, bridalPackages, formatPrice,
 } from '@/lib/bookingData';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,9 @@ const BookingWizard = () => {
   const hallPrice = store.hallDuration
     ? hallDurations.find(d => d.id === store.hallDuration)?.price ?? 0
     : 0;
-  const extrasPrice = store.selectedExtras.reduce((sum, id) => sum + (extras.find(x => x.id === id)?.price ?? 0), 0);
+  const hallTiming = store.hallDuration
+    ? hallDurations.find(d => d.id === store.hallDuration)?.timing ?? ''
+    : '';
   // Photo
   const photoPrice = store.photoPackageId
     ? (() => {
@@ -35,9 +37,9 @@ const BookingWizard = () => {
     : 0;
   // Decor
   const decorPrice = store.selectedDecorations.reduce((sum, id) => sum + (decorationItems.find(x => x.id === id)?.price ?? 0), 0);
-  // Salon
+  // Salon (now under Bridal section)
   const salonTotal = store.selectedSalonIds.reduce((sum, id) => sum + (salonPackages.find(x => x.id === id)?.price ?? 0), 0);
-  // Bridal
+  // Bridal (groom/bride packages)
   const bridalTotal = store.selectedBridalIds.reduce((sum, id) => sum + (bridalPackages.find(x => x.id === id)?.price ?? 0), 0);
   // Event items
   const eventTotal = store.selectedEventItems.reduce((sum, sel) => {
@@ -45,22 +47,28 @@ const BookingWizard = () => {
     return sum + (item ? item.basePrice * sel.qty : 0);
   }, 0);
 
-  // Discount: 30% on event total if >= 1.5L
-  const eventDiscount = eventTotal >= 150000 ? Math.round(eventTotal * 0.3) : 0;
+  // DJ price (from event items that are DJ-related)
+  const djEventIds = ['dj-dance', 'chariot-entry'];
+  const djTotal = store.selectedEventItems
+    .filter(sel => djEventIds.includes(sel.id))
+    .reduce((sum, sel) => {
+      const item = eventItems.find(x => x.id === sel.id);
+      return sum + (item ? item.basePrice * sel.qty : 0);
+    }, 0);
 
-  const grandTotal = hallPrice + extrasPrice + photoPrice + decorPrice + salonTotal + bridalTotal + eventTotal - eventDiscount;
+  // Discount: 30% on (bridal + salon + events + DJ) combined if >= ₹2,00,000
+  const discountableTotal = salonTotal + bridalTotal + eventTotal;
+  const combinedDiscount = discountableTotal >= 200000 ? Math.round(discountableTotal * 0.3) : 0;
+
+  const grandTotal = hallPrice + photoPrice + decorPrice + salonTotal + bridalTotal + eventTotal - combinedDiscount;
   const advanceAmount = Math.round(grandTotal * 0.1);
 
   const getSelectionSummary = () => {
     const items: string[] = [];
     if (store.hallDuration) {
       const h = hallDurations.find(d => d.id === store.hallDuration);
-      items.push(`Hall: ${h?.label}`);
+      items.push(`Hall: ${h?.label} (${h?.timing})`);
     }
-    store.selectedExtras.forEach(id => {
-      const e = extras.find(x => x.id === id);
-      if (e) items.push(`Extra: ${e.label}`);
-    });
     if (store.photoPackageId) {
       const p = photoPackages.find(x => x.id === store.photoPackageId);
       items.push(`Photography: ${p?.name} (${store.photoEventCount} event${store.photoEventCount > 1 ? 's' : ''})`);
@@ -71,17 +79,17 @@ const BookingWizard = () => {
     });
     store.selectedSalonIds.forEach(id => {
       const s = salonPackages.find(x => x.id === id);
-      if (s) items.push(`Salon: ${s.name}`);
+      if (s) items.push(`Bridal Makeup: ${s.name}`);
     });
     store.selectedBridalIds.forEach(id => {
       const b = bridalPackages.find(x => x.id === id);
-      if (b) items.push(`Bridal: ${b.name} (${b.type})`);
+      if (b) items.push(`Bridal (${b.type}): ${b.name}`);
     });
     store.selectedEventItems.forEach(sel => {
       const e = eventItems.find(x => x.id === sel.id);
       if (e) items.push(`Event: ${e.name} x${sel.qty}`);
     });
-    if (eventDiscount > 0) items.push(`Discount (30% on Event): -${formatPrice(eventDiscount)}`);
+    if (combinedDiscount > 0) items.push(`Discount (30% on Bridal+Events+DJ): -${formatPrice(combinedDiscount)}`);
     return items;
   };
 
@@ -101,7 +109,7 @@ const BookingWizard = () => {
       advanceAmount,
       status: 'confirmed' as const,
       selections,
-      discount: eventDiscount,
+      discount: combinedDiscount,
     };
     store.addBooking(booking);
 
@@ -200,11 +208,17 @@ const BookingWizard = () => {
                     </li>
                   ))}
                 </ul>
+                {hallTiming && (
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-muted-foreground">Timing</span>
+                    <span className="font-semibold text-foreground">{hallTiming}</span>
+                  </div>
+                )}
                 <div className="border-t border-border pt-4 space-y-2">
-                  {eventDiscount > 0 && (
+                  {combinedDiscount > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Event Discount (30%)</span>
-                      <span className="font-semibold text-destructive">-{formatPrice(eventDiscount)}</span>
+                      <span className="text-muted-foreground">Discount (30% on Bridal+Events+DJ)</span>
+                      <span className="font-semibold text-destructive">-{formatPrice(combinedDiscount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-lg">
@@ -286,8 +300,9 @@ const BookingWizard = () => {
                   <p><span className="font-semibold">Name:</span> {store.customerName}</p>
                   <p><span className="font-semibold">Phone:</span> {store.customerPhone}</p>
                   <p><span className="font-semibold">Date:</span> {store.eventDate ? format(store.eventDate, 'PPP') : 'TBD'}</p>
+                  {hallTiming && <p><span className="font-semibold">Timing:</span> {hallTiming}</p>}
                   <p><span className="font-semibold">Total:</span> {formatPrice(grandTotal)}</p>
-                  {eventDiscount > 0 && <p><span className="font-semibold">Discount:</span> -{formatPrice(eventDiscount)}</p>}
+                  {combinedDiscount > 0 && <p><span className="font-semibold">Discount:</span> -{formatPrice(combinedDiscount)}</p>}
                   <p><span className="font-semibold">Advance:</span> {formatPrice(advanceAmount)}</p>
                   <p><span className="font-semibold">Txn ID:</span> {store.transactionId}</p>
                   {store.paymentScreenshot && <p><span className="font-semibold">Screenshot:</span> {store.paymentScreenshot.name} ✅</p>}
