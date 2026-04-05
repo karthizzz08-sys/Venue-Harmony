@@ -86,29 +86,6 @@ const HallBookingSection = () => {
           </div>
         </div>
 
-        <div>
-          <h3 className="font-display text-2xl font-bold text-foreground mb-6 text-center">✨ Optional Extras</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {extras.map((e) => (
-              <label
-                key={e.id}
-                className={`glass-card p-5 flex items-center gap-4 cursor-pointer transition-all hover:scale-[1.01] ${
-                  selectedExtras.includes(e.id) ? 'ring-2 ring-primary bg-accent' : ''
-                }`}
-              >
-                <Checkbox
-                  checked={selectedExtras.includes(e.id)}
-                  onCheckedChange={() => toggleExtra(e.id)}
-                />
-                {extraIcons[e.id] || <Sparkles className="w-5 h-5 text-primary" />}
-                <div className="flex-1">
-                  <p className="font-semibold text-foreground">{e.label}</p>
-                  <p className="text-primary font-bold">{formatPrice(e.price)}</p>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );
