@@ -1,18 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarCheck, CheckCircle2, XCircle } from 'lucide-react';
-
-const bookedDates = [
-  new Date(2026, 3, 10),
-  new Date(2026, 3, 15),
-  new Date(2026, 3, 22),
-  new Date(2026, 4, 5),
-  new Date(2026, 4, 12),
-];
+import { supabase } from '@/integrations/supabase/client';
 
 const AvailabilityChecker = () => {
   const [selected, setSelected] = useState<Date | undefined>();
+  const [bookedDates, setBookedDates] = useState<Date[]>([]);
+
+  useEffect(() => {
+    const fetchDates = async () => {
+      const { data } = await supabase.from('availability').select('date');
+      if (data) {
+        setBookedDates(data.map(d => new Date(d.date + 'T00:00:00')));
+      }
+    };
+    fetchDates();
+  }, []);
 
   const isBooked = selected
     ? bookedDates.some(d => d.toDateString() === selected.toDateString())
