@@ -10,17 +10,32 @@ const AvailabilityChecker = () => {
 
   useEffect(() => {
     const fetchDates = async () => {
-      const { data } = await supabase.from('availability').select('date');
+      const { data, error } = await supabase
+        .from('availability')
+        .select('date, status');
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
       if (data) {
-        setBookedDates(data.map(d => new Date(d.date + 'T00:00:00')));
+        const booked = data
+          .filter((d) => d.status === 'booked') // ✅ only booked
+          .map((d) => new Date(d.date + 'T00:00:00'));
+
+        setBookedDates(booked);
       }
     };
+
     fetchDates();
   }, []);
 
-  const isBooked = selected
-    ? bookedDates.some(d => d.toDateString() === selected.toDateString())
-    : null;
+  const isBooked =
+    selected &&
+    bookedDates.some(
+      (d) => d.toDateString() === selected.toDateString()
+    );
 
   return (
     <section id="availability" className="py-20 px-4">
@@ -35,7 +50,9 @@ const AvailabilityChecker = () => {
             <CalendarCheck className="inline w-4 h-4 mr-1" /> Availability
           </span>
           <h2 className="section-title mt-2">Check Availability</h2>
-          <p className="section-subtitle mt-3">Select a date to check hall availability</p>
+          <p className="section-subtitle mt-3">
+            Select a date to check hall availability
+          </p>
         </motion.div>
 
         <div className="glass-card p-6 flex flex-col items-center">
@@ -43,11 +60,19 @@ const AvailabilityChecker = () => {
             mode="single"
             selected={selected}
             onSelect={setSelected}
-            disabled={(date) => date < new Date()}
+            disabled={(date) =>
+              date < new Date() ||
+              bookedDates.some(
+                (d) => d.toDateString() === date.toDateString()
+              )
+            } // ✅ disable past + booked
             className="p-3 pointer-events-auto"
             modifiers={{ booked: bookedDates }}
             modifiersStyles={{
-              booked: { backgroundColor: 'hsl(0 84.2% 60.2% / 0.2)', color: 'hsl(0 84.2% 60.2%)' },
+              booked: {
+                backgroundColor: 'hsl(0 84.2% 60.2% / 0.2)',
+                color: 'hsl(0 84.2% 60.2%)',
+              },
             }}
           />
 
@@ -62,9 +87,13 @@ const AvailabilityChecker = () => {
               }`}
             >
               {isBooked ? (
-                <><XCircle className="w-4 h-4" /> Already booked on this date</>
+                <>
+                  <XCircle className="w-4 h-4" /> Already booked on this date
+                </>
               ) : (
-                <><CheckCircle2 className="w-4 h-4" /> Available! Book now</>
+                <>
+                  <CheckCircle2 className="w-4 h-4" /> Available! Book now
+                </>
               )}
             </motion.div>
           )}
