@@ -8,11 +8,11 @@ const generateBookingPDF = (b: BookingRecord) => {
   const content = [
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     ' SIKARA MAHAL - BOOKING RECEIPT',
-    ' Luxury Wedding Hall',
+    ' A/C Luxury Wedding Hall',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     '',
     `Booking ID: ${b.id}`,
-    `Date: ${b.date}`,
+    `Event Date: ${b.date}`,
     `Status: Successfully Booked ✓`,
     '',
     '── Customer Details ──────────────────',
@@ -28,16 +28,19 @@ const generateBookingPDF = (b: BookingRecord) => {
     `Advance Paid (10%): ${formatPrice(b.advanceAmount)}`,
     `Balance Due: ${formatPrice(b.totalAmount - b.advanceAmount)}`,
     '',
+    '── Contact ──────────────────────────',
+    'WhatsApp: +91 96986 78450',
+    '',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     '  Thank you for choosing Sikara Mahal!',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
   ].join('\n');
 
-  const blob = new Blob([content], { type: 'text/plain' });
+  const blob = new Blob([content], { type: 'application/pdf' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `Sikara_Booking_${b.customerName.replace(/\s+/g, '_')}_${b.id}.txt`;
+  a.download = `Sikara_Booking_${b.customerName.replace(/\s+/g, '_')}_${b.id}.pdf`;
   a.click();
   URL.revokeObjectURL(url);
 };
@@ -45,7 +48,6 @@ const generateBookingPDF = (b: BookingRecord) => {
 const BookingHistory = () => {
   const { bookingHistory, customerPhone } = useBookingStore();
 
-  // Show only bookings matching current user's phone (if they entered one)
   const userBookings = customerPhone
     ? bookingHistory.filter(b => b.phone === customerPhone)
     : bookingHistory;
@@ -96,7 +98,7 @@ const BookingHistory = () => {
                   className="ml-auto flex items-center gap-1.5 text-primary hover:text-primary"
                 >
                   <Download className="w-4 h-4" />
-                  Download Receipt
+                  Download PDF
                 </Button>
               </div>
             </div>
