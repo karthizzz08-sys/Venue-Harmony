@@ -3,19 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBookingStore } from '@/lib/bookingStore';
 import {
   hallDurations, photoPackages, decorationItems, eventItems,
-  salonPackages, bridalPackages, formatPrice,
+  salonPackages, cateringPackages, formatPrice,
 } from '@/lib/bookingData';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Check, ChevronLeft, ChevronRight, Upload, MessageCircle, ClipboardList, UserCircle, CreditCard, CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Check, ChevronLeft, ChevronRight, Upload, MessageCircle, ClipboardList, UserCircle, CreditCard, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 import paymentQr from '@/assets/payment-qr.jpeg';
 
-const WHATSAPP_NUMBER = '919876543210';
+const WHATSAPP_NUMBER = '919698678450';
 
 const BookingWizard = () => {
   const [step, setStep] = useState(0);
@@ -37,17 +34,20 @@ const BookingWizard = () => {
     : 0;
   // Decor
   const decorPrice = store.selectedDecorations.reduce((sum, id) => sum + (decorationItems.find(x => x.id === id)?.price ?? 0), 0);
-  // Salon (now under Bridal section)
+  // Salon (Bridal)
   const salonTotal = store.selectedSalonIds.reduce((sum, id) => sum + (salonPackages.find(x => x.id === id)?.price ?? 0), 0);
-  // Bridal (groom/bride packages)
-  const bridalTotal = store.selectedBridalIds.reduce((sum, id) => sum + (bridalPackages.find(x => x.id === id)?.price ?? 0), 0);
+  // Catering
+  const cateringTotal = store.selectedCatering.reduce((sum, sel) => {
+    const pkg = cateringPackages.find(x => x.id === sel.packageId);
+    return sum + (pkg ? pkg.pricePerHead * sel.headCount : 0);
+  }, 0);
   // Event items
   const eventTotal = store.selectedEventItems.reduce((sum, sel) => {
     const item = eventItems.find(x => x.id === sel.id);
     return sum + (item ? item.basePrice * sel.qty : 0);
   }, 0);
 
-  // DJ price (from event items that are DJ-related)
+  // DJ price (from event items)
   const djEventIds = ['dj-dance', 'chariot-entry'];
   const djTotal = store.selectedEventItems
     .filter(sel => djEventIds.includes(sel.id))
@@ -56,11 +56,11 @@ const BookingWizard = () => {
       return sum + (item ? item.basePrice * sel.qty : 0);
     }, 0);
 
-  // Discount: 30% on (bridal + salon + events + DJ) combined if >= ₹2,00,000
-  const discountableTotal = salonTotal + bridalTotal + eventTotal;
+  // Discount: 30% on (bridal + events + DJ) if >= ₹2,00,000
+  const discountableTotal = salonTotal + eventTotal + djTotal;
   const combinedDiscount = discountableTotal >= 200000 ? Math.round(discountableTotal * 0.3) : 0;
 
-  const grandTotal = hallPrice + photoPrice + decorPrice + salonTotal + bridalTotal + eventTotal - combinedDiscount;
+  const grandTotal = hallPrice + photoPrice + decorPrice + salonTotal + cateringTotal + eventTotal - combinedDiscount;
   const advanceAmount = Math.round(grandTotal * 0.1);
 
   const getSelectionSummary = () => {
@@ -81,9 +81,9 @@ const BookingWizard = () => {
       const s = salonPackages.find(x => x.id === id);
       if (s) items.push(`Bridal Makeup: ${s.name}`);
     });
-    store.selectedBridalIds.forEach(id => {
-      const b = bridalPackages.find(x => x.id === id);
-      if (b) items.push(`Bridal (${b.type}): ${b.name}`);
+    store.selectedCatering.forEach(sel => {
+      const c = cateringPackages.find(x => x.id === sel.packageId);
+      if (c) items.push(`Catering: ${c.name} x${sel.headCount} heads = ${formatPrice(c.pricePerHead * sel.headCount)}`);
     });
     store.selectedEventItems.forEach(sel => {
       const e = eventItems.find(x => x.id === sel.id);
@@ -118,8 +118,9 @@ const BookingWizard = () => {
       `👤 Name: ${store.customerName}\n` +
       `📱 Phone: ${store.customerPhone}\n` +
       `📧 Email: ${store.customerEmail || 'N/A'}\n` +
-      `📅 Date: ${booking.date}\n\n` +
-      `📋 *Selections:*\n${selections.map(s => `• ${s}`).join('\n')}\n\n` +
+      `📅 Date: ${booking.date}\n` +
+      (hallTiming ? `⏰ Timing: ${hallTiming}\n` : '') +
+      `\n📋 *Selections:*\n${selections.map(s => `• ${s}`).join('\n')}\n\n` +
       `💰 *Total: ${formatPrice(grandTotal)}*\n` +
       `💳 *Advance (10%): ${formatPrice(advanceAmount)}*\n` +
       `🧾 Transaction ID: ${store.transactionId}\n\n` +
@@ -214,6 +215,12 @@ const BookingWizard = () => {
                     <span className="font-semibold text-foreground">{hallTiming}</span>
                   </div>
                 )}
+                {store.eventDate && (
+                  <div className="flex justify-between text-sm mb-2">
+                    <span className="text-muted-foreground">Event Date</span>
+                    <span className="font-semibold text-foreground">{format(store.eventDate, 'PPP')}</span>
+                  </div>
+                )}
                 <div className="border-t border-border pt-4 space-y-2">
                   {combinedDiscount > 0 && (
                     <div className="flex justify-between text-sm">
@@ -248,20 +255,17 @@ const BookingWizard = () => {
                   <label className="text-sm font-semibold text-foreground">Email</label>
                   <Input value={store.customerEmail} onChange={e => store.setCustomerEmail(e.target.value)} placeholder="your@email.com" className="mt-1" />
                 </div>
-                <div>
-                  <label className="text-sm font-semibold text-foreground">Event Date</label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className={cn("w-full justify-start text-left font-normal mt-1", !store.eventDate && "text-muted-foreground")}>
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {store.eventDate ? format(store.eventDate, 'PPP') : 'Pick a date'}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={store.eventDate ?? undefined} onSelect={(d) => store.setEventDate(d ?? null)} disabled={(date) => date < new Date()} initialFocus className="p-3 pointer-events-auto" />
-                    </PopoverContent>
-                  </Popover>
-                </div>
+                {store.eventDate && (
+                  <div className="p-4 bg-accent rounded-lg">
+                    <p className="text-sm font-semibold text-foreground">📅 Selected Event Date: {format(store.eventDate, 'PPP')}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Selected from availability checker</p>
+                  </div>
+                )}
+                {!store.eventDate && (
+                  <div className="p-4 bg-destructive/10 rounded-lg">
+                    <p className="text-sm font-semibold text-destructive">⚠️ Please select a date from the Availability Checker above</p>
+                  </div>
+                )}
               </div>
             )}
 

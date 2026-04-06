@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useBookingStore } from '@/lib/bookingStore';
 import {
   hallDurations, photoPackages, decorationItems, eventItems,
-  salonPackages, bridalPackages, formatPrice,
+  salonPackages, cateringPackages, formatPrice,
 } from '@/lib/bookingData';
 
 const FloatingTotal = () => {
@@ -19,17 +19,27 @@ const FloatingTotal = () => {
     : 0;
   const decorPrice = store.selectedDecorations.reduce((sum, id) => sum + (decorationItems.find(x => x.id === id)?.price ?? 0), 0);
   const salonTotal = store.selectedSalonIds.reduce((sum, id) => sum + (salonPackages.find(x => x.id === id)?.price ?? 0), 0);
-  const bridalTotal = store.selectedBridalIds.reduce((sum, id) => sum + (bridalPackages.find(x => x.id === id)?.price ?? 0), 0);
+  const cateringTotal = store.selectedCatering.reduce((sum, sel) => {
+    const pkg = cateringPackages.find(x => x.id === sel.packageId);
+    return sum + (pkg ? pkg.pricePerHead * sel.headCount : 0);
+  }, 0);
   const eventTotal = store.selectedEventItems.reduce((sum, sel) => {
     const item = eventItems.find(x => x.id === sel.id);
     return sum + (item ? item.basePrice * sel.qty : 0);
   }, 0);
 
-  // 30% discount on bridal+salon+events combined if >= ₹2,00,000
-  const discountableTotal = salonTotal + bridalTotal + eventTotal;
+  const djEventIds = ['dj-dance', 'chariot-entry'];
+  const djTotal = store.selectedEventItems
+    .filter(sel => djEventIds.includes(sel.id))
+    .reduce((sum, sel) => {
+      const item = eventItems.find(x => x.id === sel.id);
+      return sum + (item ? item.basePrice * sel.qty : 0);
+    }, 0);
+
+  const discountableTotal = salonTotal + eventTotal + djTotal;
   const combinedDiscount = discountableTotal >= 200000 ? Math.round(discountableTotal * 0.3) : 0;
 
-  const total = hallPrice + photoPrice + decorPrice + salonTotal + bridalTotal + eventTotal - combinedDiscount;
+  const total = hallPrice + photoPrice + decorPrice + salonTotal + cateringTotal + eventTotal - combinedDiscount;
 
   useEffect(() => {
     setVisible(total > 0);
@@ -48,7 +58,7 @@ const FloatingTotal = () => {
           <p className="text-primary-foreground/80 text-sm">Estimated Total</p>
           <p className="text-primary-foreground text-2xl font-bold font-display">{formatPrice(total)}</p>
           {combinedDiscount > 0 && (
-            <p className="text-primary-foreground/70 text-xs">Incl. 30% bridal+events discount</p>
+            <p className="text-primary-foreground/70 text-xs">Incl. 30% bridal+events+DJ discount</p>
           )}
         </div>
         <a href="#booking" className="bg-primary-foreground text-primary px-6 py-3 rounded-full font-bold hover:bg-primary-foreground/90 transition-colors">

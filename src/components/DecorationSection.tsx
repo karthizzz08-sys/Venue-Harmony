@@ -2,13 +2,16 @@ import { motion } from 'framer-motion';
 import { decorationItems, formatPrice } from '@/lib/bookingData';
 import { useBookingStore } from '@/lib/bookingStore';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Flower2, DoorOpen, Lamp, Car } from 'lucide-react';
+import { Flower2, DoorOpen, Lamp, Car, Sparkles } from 'lucide-react';
 import decor1 from '@/assets/decor-1.jpg';
 import decor2 from '@/assets/decor-2.jpg';
 import decor3 from '@/assets/decor-3.jpg';
 import decor4 from '@/assets/decor-4.jpg';
 import decor5 from '@/assets/decor-5.jpg';
 import decor6 from '@/assets/decor-6.jpg';
+import decor7 from '@/assets/decor-7.jpg';
+import decor8 from '@/assets/decor-8.jpg';
+import decor9 from '@/assets/decor-9.jpg';
 
 const decorImages: Record<string, string> = {
   'stage-basic': decor6,
@@ -17,6 +20,9 @@ const decorImages: Record<string, string> = {
   'entrance': decor2,
   'table-decor': decor3,
   'car-decor': decor4,
+  'mandapam-floral': decor7,
+  'reception-decor': decor8,
+  'outdoor-arch': decor9,
 };
 
 const decorIcons: Record<string, React.ReactNode> = {
@@ -26,6 +32,9 @@ const decorIcons: Record<string, React.ReactNode> = {
   'entrance': <DoorOpen className="w-5 h-5 text-primary" />,
   'table-decor': <Lamp className="w-5 h-5 text-primary" />,
   'car-decor': <Car className="w-5 h-5 text-primary" />,
+  'mandapam-floral': <Flower2 className="w-5 h-5 text-primary" />,
+  'reception-decor': <Sparkles className="w-5 h-5 text-primary" />,
+  'outdoor-arch': <DoorOpen className="w-5 h-5 text-primary" />,
 };
 
 const DecorationSection = () => {

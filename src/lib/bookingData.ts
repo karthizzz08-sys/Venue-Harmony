@@ -68,22 +68,82 @@ export const salonPackages: SalonPackage[] = [
   },
 ];
 
-// ─── BRIDAL PACKAGES ───
-export interface BridalPackage {
+// ─── CATERING ───
+export interface CateringPackage {
   id: string;
   name: string;
-  price: number;
-  type: 'groom' | 'bride';
+  pricePerHead: number;
+  category: 'tiffen' | 'lunch' | 'dinner';
+  includes: string[];
 }
 
-export const bridalPackages: BridalPackage[] = [
-  { id: 'groom-basic', name: 'Basic', price: 2000, type: 'groom' },
-  { id: 'groom-premium', name: 'Premium', price: 4999, type: 'groom' },
-  { id: 'groom-custom', name: 'Custom', price: 12999, type: 'groom' },
-  { id: 'bride-basic', name: 'Basic', price: 12000, type: 'bride' },
-  { id: 'bride-platinum', name: 'Platinum', price: 18999, type: 'bride' },
-  { id: 'bride-elite', name: 'Elite', price: 24999, type: 'bride' },
-  { id: 'bride-creative', name: 'Creative', price: 34999, type: 'bride' },
+export const cateringPackages: CateringPackage[] = [
+  // Morning Tiffen
+  {
+    id: 'tiffen-260',
+    name: 'Premium Tiffen',
+    pricePerHead: 260,
+    category: 'tiffen',
+    includes: ['Carrot Halwa / Asoka Halwa', 'Mini Vada / Bonda', 'Variety Idli', 'Mini Onion Uthappam', 'Puri + Masal', 'Sambar', 'Coconut Chutney', 'Tomato Chutney', 'Kalla Paruppu Thovaiyal', 'Idiyappam', 'Coconut Milk', 'Mundiri Pongal', 'Badam Milk', 'Banana', 'Water Bottle', 'Banana Leaf', 'Paper Roll', 'Serving & Cleaning'],
+  },
+  {
+    id: 'tiffen-200',
+    name: 'Standard Tiffen',
+    pricePerHead: 200,
+    category: 'tiffen',
+    includes: ['Carrot Halwa / Asoka Halwa', 'Mini Vada / Bonda', 'Variety Idli', 'Mini Onion Uthappam', 'Puri + Masal', 'Sambar', 'Coconut Chutney', 'Tomato Chutney', 'Idiyappam', 'Coconut Milk', 'Tea / Coffee', 'Water Bottle', 'Banana Leaf', 'Paper Roll', 'Serving & Cleaning'],
+  },
+  {
+    id: 'tiffen-150',
+    name: 'Basic Tiffen',
+    pricePerHead: 150,
+    category: 'tiffen',
+    includes: ['Jilebi / Milk Sweet', 'Mini Vada / Bonda', 'Variety Idli', 'Mini Veg Uthappam', 'Sambar', 'Coconut Chutney', 'Tomato Chutney', 'Water Bottle', 'Banana Leaf', 'Paper Roll', 'Serving & Cleaning'],
+  },
+  // Lunch
+  {
+    id: 'lunch-650',
+    name: 'Grand Non-Veg Lunch',
+    pricePerHead: 650,
+    category: 'lunch',
+    includes: ['Mutton Biriyani (Seeraga Samba)', 'Bread Halwa', 'Elumbu Thalicha', 'Egg', 'Fish 65', 'Chicken Gravy', 'Raitha', 'Brinjal Curry', 'Curd Rice', 'Live Beeda', 'Badam Milk', 'Live Ice Cream', 'Water Bottle', 'Banana Leaf', 'Serving & Cleaning'],
+  },
+  {
+    id: 'lunch-500',
+    name: 'Chicken Biriyani Lunch',
+    pricePerHead: 500,
+    category: 'lunch',
+    includes: ['Chicken Biriyani', 'Bread Halwa', 'Chicken Gravy', 'Egg', 'Raitha', 'Brinjal Curry', 'Curd Rice', 'Live Beeda', 'Badam Milk', 'Live Ice Cream', 'Water Bottle', 'Banana Leaf', 'Serving & Cleaning'],
+  },
+  {
+    id: 'lunch-450',
+    name: 'Standard Lunch',
+    pricePerHead: 450,
+    category: 'lunch',
+    includes: ['Chicken Biriyani', 'Chicken Gravy', 'Egg', 'Raitha', 'Brinjal Curry', 'Curd Rice', 'Badam Milk', 'Ice Cream', 'Water Bottle', 'Banana Leaf', 'Serving & Cleaning'],
+  },
+  // Dinner
+  {
+    id: 'dinner-450',
+    name: 'Grand Dinner',
+    pricePerHead: 450,
+    category: 'dinner',
+    includes: ['Halwa', 'Tiffen Items', 'Parotta + Paneer Butter Masala', 'Fried Rice', 'Gobi 65', 'Idiyappam', 'Milk', 'Live Ice Cream', 'Live Beeda', 'Water Bottle', 'Banana Leaf', 'Serving & Cleaning'],
+  },
+  {
+    id: 'dinner-380',
+    name: 'Medium Dinner',
+    pricePerHead: 380,
+    category: 'dinner',
+    includes: ['Halwa', 'Parotta + Paneer Butter Masala', 'Fried Rice', 'Gobi 65', 'Idiyappam', 'Milk', 'Ice Cream', 'Water Bottle', 'Banana Leaf', 'Serving & Cleaning'],
+  },
+  {
+    id: 'dinner-280',
+    name: 'Basic Dinner',
+    pricePerHead: 280,
+    category: 'dinner',
+    includes: ['Parotta + Paneer Butter Masala', 'Fried Rice', 'Gobi 65', 'Tea / Coffee', 'Ice Cream', 'Water Bottle', 'Banana Leaf', 'Serving & Cleaning'],
+  },
 ];
 
 // ─── EVENT ITEMS (detailed) ───
@@ -187,6 +247,9 @@ export const decorationItems: DecorationItem[] = [
   { id: 'entrance', name: 'Entrance Decoration', price: 10000, description: 'Welcome arch with flowers & drapes', icon: '🚪' },
   { id: 'table-decor', name: 'Table Centerpieces', price: 8000, description: 'Elegant table arrangements (all tables)', icon: '🕯️' },
   { id: 'car-decor', name: 'Wedding Car Decoration', price: 5000, description: 'Beautiful car décor with flowers & ribbons', icon: '🚗' },
+  { id: 'mandapam-floral', name: 'Mandapam Floral Setup', price: 25000, description: 'Traditional mandapam with fresh flowers', icon: '🌺' },
+  { id: 'reception-decor', name: 'Reception Hall Décor', price: 40000, description: 'Full reception hall decoration with drapes & lights', icon: '✨' },
+  { id: 'outdoor-arch', name: 'Outdoor Welcome Arch', price: 18000, description: 'Grand outdoor arch with marigold & LED lights', icon: '🏛️' },
 ];
 
 export function formatPrice(amount: number): string {

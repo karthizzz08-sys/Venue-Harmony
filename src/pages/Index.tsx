@@ -5,8 +5,10 @@ import HallBookingSection from '@/components/HallBookingSection';
 import PhotographySection from '@/components/PhotographySection';
 import DecorationSection from '@/components/DecorationSection';
 import SalonSection from '@/components/SalonSection';
+import CateringSection from '@/components/CateringSection';
 import EventDetailSection from '@/components/EventDetailSection';
 import DJSection from '@/components/DJSection';
+import GallerySection from '@/components/GallerySection';
 import BookingWizard from '@/components/BookingWizard';
 import BookingHistory from '@/components/BookingHistory';
 import FloatingTotal from '@/components/FloatingTotal';
@@ -21,8 +23,10 @@ const Index = () => {
       <PhotographySection />
       <DecorationSection />
       <SalonSection />
+      <CateringSection />
       <EventDetailSection />
       <DJSection />
+      <GallerySection />
       <BookingWizard />
       <BookingHistory />
       <FloatingTotal />
@@ -35,12 +39,15 @@ const Index = () => {
           <p className="text-primary-foreground/60 text-sm">
             Making your dream wedding come true ✨
           </p>
-          <div className="flex justify-center gap-6 mt-6 text-primary-foreground/50 text-sm">
+          <div className="flex flex-wrap justify-center gap-6 mt-6 text-primary-foreground/50 text-sm">
             <a href="#hall" className="hover:text-primary-foreground transition-colors">Hall</a>
             <a href="#photography" className="hover:text-primary-foreground transition-colors">Photography</a>
             <a href="#decoration" className="hover:text-primary-foreground transition-colors">Decoration</a>
             <a href="#salon" className="hover:text-primary-foreground transition-colors">Bridal</a>
+            <a href="#catering" className="hover:text-primary-foreground transition-colors">Catering</a>
             <a href="#events" className="hover:text-primary-foreground transition-colors">Events</a>
+            <a href="#dj" className="hover:text-primary-foreground transition-colors">DJ</a>
+            <a href="#gallery" className="hover:text-primary-foreground transition-colors">Gallery</a>
           </div>
           <p className="text-primary-foreground/30 text-xs mt-8">
             © {new Date().getFullYear()} Sikara Mahal. All rights reserved.

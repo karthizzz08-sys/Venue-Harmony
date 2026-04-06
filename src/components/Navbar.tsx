@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, Home, Building2, Camera, Palette, Sparkles, Crown, PartyPopper, Music, CalendarCheck } from 'lucide-react';
+import { Menu, X, Home, Building2, Camera, Palette, Sparkles, Crown, PartyPopper, Music, CalendarCheck, UtensilsCrossed, Image } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 
 const Navbar = () => {
@@ -11,8 +11,10 @@ const Navbar = () => {
     { href: '#photography', label: 'Photography', icon: Camera },
     { href: '#decoration', label: 'Decoration', icon: Palette },
     { href: '#salon', label: 'Bridal', icon: Crown },
+    { href: '#catering', label: 'Catering', icon: UtensilsCrossed },
     { href: '#events', label: 'Events', icon: PartyPopper },
     { href: '#dj', label: 'DJ', icon: Music },
+    { href: '#gallery', label: 'Gallery', icon: Image },
     { href: '#booking', label: 'Book Now', icon: CalendarCheck },
   ];
 
