@@ -17,6 +17,11 @@ export interface EventItemSelection {
   qty: number;
 }
 
+export interface CateringSelection {
+  packageId: string;
+  headCount: number;
+}
+
 export interface BookingState {
   // Hall
   hallDuration: string | null;
@@ -26,10 +31,10 @@ export interface BookingState {
   photoEventCount: 1 | 2;
   // Decoration
   selectedDecorations: string[];
-  // Salon
+  // Salon/Bridal
   selectedSalonIds: string[];
-  // Bridal
-  selectedBridalIds: string[];
+  // Catering
+  selectedCatering: CateringSelection[];
   // Event items (detailed)
   selectedEventItems: EventItemSelection[];
   // Payment
@@ -49,7 +54,8 @@ export interface BookingState {
   setPhotoEventCount: (count: 1 | 2) => void;
   toggleDecoration: (id: string) => void;
   toggleSalon: (id: string) => void;
-  toggleBridal: (id: string) => void;
+  toggleCatering: (id: string) => void;
+  setCateringHeadCount: (id: string, count: number) => void;
   toggleEventItem: (id: string) => void;
   setEventItemQty: (id: string, qty: number) => void;
   setTransactionId: (id: string) => void;
@@ -76,7 +82,7 @@ export const useBookingStore = create<BookingState>((set) => ({
   photoEventCount: 1,
   selectedDecorations: [],
   selectedSalonIds: [],
-  selectedBridalIds: [],
+  selectedCatering: [],
   selectedEventItems: [],
   transactionId: '',
   paymentScreenshot: null,
@@ -104,10 +110,15 @@ export const useBookingStore = create<BookingState>((set) => ({
       ? s.selectedSalonIds.filter(x => x !== id)
       : [...s.selectedSalonIds, id]
   })),
-  toggleBridal: (id) => set((s) => ({
-    selectedBridalIds: s.selectedBridalIds.includes(id)
-      ? s.selectedBridalIds.filter(x => x !== id)
-      : [...s.selectedBridalIds, id]
+  toggleCatering: (id) => set((s) => {
+    const exists = s.selectedCatering.find(x => x.packageId === id);
+    if (exists) {
+      return { selectedCatering: s.selectedCatering.filter(x => x.packageId !== id) };
+    }
+    return { selectedCatering: [...s.selectedCatering, { packageId: id, headCount: 100 }] };
+  }),
+  setCateringHeadCount: (id, count) => set((s) => ({
+    selectedCatering: s.selectedCatering.map(x => x.packageId === id ? { ...x, headCount: count } : x)
   })),
   toggleEventItem: (id) => set((s) => {
     const exists = s.selectedEventItems.find(x => x.id === id);
@@ -137,7 +148,7 @@ export const useBookingStore = create<BookingState>((set) => ({
     photoEventCount: 1,
     selectedDecorations: [],
     selectedSalonIds: [],
-    selectedBridalIds: [],
+    selectedCatering: [],
     selectedEventItems: [],
     transactionId: '',
     paymentScreenshot: null,
