@@ -6,6 +6,8 @@ const videos = [
   { src: '/videos/d2.mp4', title: 'DJ Performance 2' },
   { src: '/videos/d3.mp4', title: 'DJ Performance 3' },
   { src: '/videos/d4.mp4', title: 'DJ Performance 4' },
+  { src: '/videos/v2.mp4', title: 'DJ Performance 5' },
+  { src: '/videos/v3.mp4', title: 'DJ Performance 6' },
 ];
 
 const DJSection = () => {
@@ -25,7 +27,7 @@ const DJSection = () => {
           <p className="section-subtitle mt-3">Electrifying performances to light up your celebration</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {videos.map((v, i) => (
             <motion.div
               key={i}
@@ -39,7 +41,7 @@ const DJSection = () => {
                 src={v.src}
                 controls
                 preload="metadata"
-                className="w-full h-48 sm:h-64 object-cover bg-foreground/10"
+                className="w-full h-48 sm:h-56 object-cover bg-foreground/10"
                 playsInline
               />
               <div className="p-4">
