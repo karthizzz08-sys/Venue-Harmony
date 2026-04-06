@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, Home, Building2, Camera, Palette, Sparkles, Crown, PartyPopper, Music, CalendarCheck } from 'lucide-react';
+import { Menu, X, Home, Building2, Camera, Palette, Sparkles, Crown, PartyPopper, Music, CalendarCheck, UtensilsCrossed, Image } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 
 const Navbar = () => {
