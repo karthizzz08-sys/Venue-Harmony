@@ -58,7 +58,7 @@ const FloatingTotal = () => {
           <p className="text-primary-foreground/80 text-sm">Estimated Total</p>
           <p className="text-primary-foreground text-2xl font-bold font-display">{formatPrice(total)}</p>
           {combinedDiscount > 0 && (
-            <p className="text-primary-foreground/70 text-xs">Incl. 30% bridal+events+DJ discount</p>
+            <p className="text-primary-foreground/70 text-xs">Incl. 10% overall discount</p>
           )}
         </div>
         <a href="#booking" className="bg-primary-foreground text-primary px-6 py-3 rounded-full font-bold hover:bg-primary-foreground/90 transition-colors">

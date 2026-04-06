@@ -29,7 +29,7 @@ const generateBookingPDF = (b: BookingRecord) => {
     `Balance Due: ${formatPrice(b.totalAmount - b.advanceAmount)}`,
     '',
     '── Contact ──────────────────────────',
-    'WhatsApp: +91 96986 78450',
+    'WhatsApp: +91 9698678450',
     '',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     '  Thank you for choosing Sikara Mahal!',
