@@ -280,7 +280,7 @@ const BookingWizard = () => {
                 <div className="bg-muted rounded-xl p-6 text-center">
                   <img src={paymentQr} alt="UPI Payment QR Code" className="w-56 h-auto mx-auto rounded-lg" loading="lazy" width={224} height={280} />
                   <p className="text-sm text-muted-foreground mt-3">Scan to pay via any UPI app</p>
-                  <p className="text-xs text-muted-foreground mt-1">UPI ID: karthiweb495@okaxis</p>
+                  <p className="text-xs text-muted-foreground mt-1">UPI ID: s.karthikkumar2008-3@okhdfcbank</p>
                 </div>
                 <div>
                   <label className="text-sm font-semibold text-foreground">Upload Payment Screenshot *</label>
