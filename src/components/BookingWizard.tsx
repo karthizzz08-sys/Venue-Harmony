@@ -56,9 +56,9 @@ const BookingWizard = () => {
       return sum + (item ? item.basePrice * sel.qty : 0);
     }, 0);
 
-  // Discount: 10% on (bridal + events + DJ) if >= ₹3,00,000
-  const discountableTotal = salonTotal + eventTotal + djTotal  +photoPrice + decorPrice + hallPrice + cateringTotal ;
-  const combinedDiscount = discountableTotal >= 300000 ? Math.round(discountableTotal * 0.3) : 0;
+  // Discount: 30% on (bridal + events + DJ) if >= ₹2,00,000
+  const discountableTotal = salonTotal + eventTotal + djTotal;
+  const combinedDiscount = discountableTotal >= 200000 ? Math.round(discountableTotal * 0.3) : 0;
 
   const grandTotal = hallPrice + photoPrice + decorPrice + salonTotal + cateringTotal + eventTotal - combinedDiscount;
   const advanceAmount = Math.round(grandTotal * 0.1);
@@ -89,9 +89,7 @@ const BookingWizard = () => {
       const e = eventItems.find(x => x.id === sel.id);
       if (e) items.push(`Event: ${e.name} x${sel.qty}`);
     });
-    if (combinedDiscount > 0) items.push(`Discount (10% on Bridal+Events+DJ+h
-      
-      ): -${formatPrice(combinedDiscount)}`);
+    if (combinedDiscount > 0) items.push(`Discount (30% on Bridal+Events+DJ): -${formatPrice(combinedDiscount)}`);
     return items;
   };
 
@@ -226,7 +224,7 @@ const BookingWizard = () => {
                 <div className="border-t border-border pt-4 space-y-2">
                   {combinedDiscount > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Discount (10% on overall)</span>
+                      <span className="text-muted-foreground">Discount (30% on Bridal+Events+DJ)</span>
                       <span className="font-semibold text-destructive">-{formatPrice(combinedDiscount)}</span>
                     </div>
                   )}
@@ -280,7 +278,7 @@ const BookingWizard = () => {
                 <div className="bg-muted rounded-xl p-6 text-center">
                   <img src={paymentQr} alt="UPI Payment QR Code" className="w-56 h-auto mx-auto rounded-lg" loading="lazy" width={224} height={280} />
                   <p className="text-sm text-muted-foreground mt-3">Scan to pay via any UPI app</p>
-                  <p className="text-xs text-muted-foreground mt-1">UPI ID: s.karthikkumar2008-3@okhdfcbank</p>
+                  <p className="text-xs text-muted-foreground mt-1">UPI ID: karthiweb495@okaxis</p>
                 </div>
                 <div>
                   <label className="text-sm font-semibold text-foreground">Upload Payment Screenshot *</label>
