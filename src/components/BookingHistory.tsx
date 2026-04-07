@@ -89,7 +89,7 @@ const BookingHistory = () => {
               </ul>
               <div className="flex flex-wrap items-center gap-4 text-sm border-t border-border pt-3">
                 <span>Total: <strong className="text-primary">{formatPrice(b.totalAmount)}</strong></span>
-                {b.discount > 0 && <span>Discount: <strong className="text-destructive">-{formatPrice(b.discount)}</strong></span>}
+                {b.discount > 0 && <span>10% Discount: <strong className="text-destructive">-{formatPrice(b.discount)}</strong></span>}
                 <span>Advance: <strong>{formatPrice(b.advanceAmount)}</strong></span>
                 <Button
                   variant="outline"
