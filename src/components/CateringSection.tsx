@@ -87,9 +87,10 @@ const CateringSection = () => {
                             <span className="text-sm font-semibold text-foreground">Guests:</span>
                             <Input
                               type="number"
-                              min={50}
+                              min={100}
+                              step={50}
                               value={sel?.headCount ?? 100}
-                              onChange={e => setCateringHeadCount(pkg.id, Math.max(50, Number(e.target.value)))}
+                              onChange={e => setCateringHeadCount(pkg.id, Math.max(100, Math.round(Number(e.target.value) / 50) * 50))}
                               className="w-24 h-8 text-sm"
                             />
                             <span className="text-sm font-bold text-primary">
