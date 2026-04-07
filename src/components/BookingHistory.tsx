@@ -24,12 +24,12 @@ const generateBookingPDF = (b: BookingRecord) => {
     '',
     '── Payment Summary ──────────────────',
     `Total Amount: ${formatPrice(b.totalAmount)}`,
-    ...(b.discount > 0 ? [`Discount Applied: -${formatPrice(b.discount)}`] : []),
+    `10% Discount Applied: -${formatPrice(b.discount)}`,
     `Advance Paid (10%): ${formatPrice(b.advanceAmount)}`,
     `Balance Due: ${formatPrice(b.totalAmount - b.advanceAmount)}`,
     '',
     '── Contact ──────────────────────────',
-    'WhatsApp: +91 9698678450',
+    'WhatsApp: +91 96986 78450',
     '',
     '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
     '  Thank you for choosing Sikara Mahal!',
@@ -89,7 +89,7 @@ const BookingHistory = () => {
               </ul>
               <div className="flex flex-wrap items-center gap-4 text-sm border-t border-border pt-3">
                 <span>Total: <strong className="text-primary">{formatPrice(b.totalAmount)}</strong></span>
-                {b.discount > 0 && <span>Discount: <strong className="text-destructive">-{formatPrice(b.discount)}</strong></span>}
+                {b.discount > 0 && <span>10% Discount: <strong className="text-destructive">-{formatPrice(b.discount)}</strong></span>}
                 <span>Advance: <strong>{formatPrice(b.advanceAmount)}</strong></span>
                 <Button
                   variant="outline"

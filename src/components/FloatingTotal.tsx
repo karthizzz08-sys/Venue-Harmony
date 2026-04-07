@@ -28,18 +28,9 @@ const FloatingTotal = () => {
     return sum + (item ? item.basePrice * sel.qty : 0);
   }, 0);
 
-  const djEventIds = ['dj-dance', 'chariot-entry'];
-  const djTotal = store.selectedEventItems
-    .filter(sel => djEventIds.includes(sel.id))
-    .reduce((sum, sel) => {
-      const item = eventItems.find(x => x.id === sel.id);
-      return sum + (item ? item.basePrice * sel.qty : 0);
-    }, 0);
-
-  const discountableTotal = salonTotal + eventTotal + djTotal;
-  const combinedDiscount = discountableTotal >= 200000 ? Math.round(discountableTotal * 0.3) : 0;
-
-  const total = hallPrice + photoPrice + decorPrice + salonTotal + cateringTotal + eventTotal - combinedDiscount;
+  const subtotal = hallPrice + photoPrice + decorPrice + salonTotal + cateringTotal + eventTotal;
+  const discount = Math.round(subtotal * 0.1);
+  const total = subtotal - discount;
 
   useEffect(() => {
     setVisible(total > 0);
@@ -51,17 +42,15 @@ const FloatingTotal = () => {
     <motion.div
       initial={{ y: 100 }}
       animate={{ y: 0 }}
-      className="fixed bottom-0 left-0 right-0 z-50 gradient-violet p-4 shadow-2xl"
+      className="fixed bottom-0 left-0 right-0 z-50 gradient-violet p-3 sm:p-4 shadow-2xl"
     >
-      <div className="container max-w-4xl mx-auto flex items-center justify-between">
-        <div>
-          <p className="text-primary-foreground/80 text-sm">Estimated Total</p>
-          <p className="text-primary-foreground text-2xl font-bold font-display">{formatPrice(total)}</p>
-          {combinedDiscount > 0 && (
-            <p className="text-primary-foreground/70 text-xs">Incl. 10% overall discount</p>
-          )}
+      <div className="container max-w-4xl mx-auto flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-primary-foreground/80 text-xs sm:text-sm">Estimated Total</p>
+          <p className="text-primary-foreground text-lg sm:text-2xl font-bold font-display">{formatPrice(total)}</p>
+          <p className="text-primary-foreground/70 text-xs">10% discount applied</p>
         </div>
-        <a href="#booking" className="bg-primary-foreground text-primary px-6 py-3 rounded-full font-bold hover:bg-primary-foreground/90 transition-colors">
+        <a href="#booking" className="bg-primary-foreground text-primary px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:bg-primary-foreground/90 transition-colors text-sm sm:text-base whitespace-nowrap">
           Book Now →
         </a>
       </div>
