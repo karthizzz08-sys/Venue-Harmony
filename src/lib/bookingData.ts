@@ -246,10 +246,10 @@ export const decorationItems: DecorationItem[] = [
   { id: 'stage-grand', name: 'Grand Stage Decoration', price: 15000, description: 'Luxury full-stage décor with lighting', icon: '👑' },
   { id: 'entrance', name: 'Entrance Decoration', price: 15000, description: 'Welcome arch with flowers & drapes', icon: '🚪' },
   { id: 'table-decor', name: 'Table Centerpieces', price: 15000, description: 'Elegant table arrangements (all tables)', icon: '🕯️' },
-  { id: 'car-decor', name: 'Outdoor Welcome Arch', price: 15000, description: 'Beautiful car décor with flowers & ribbons', icon: '🚗' },
+  { id: 'car-decor', name: 'Outdoor Welcome Arch', price: 15000, description: 'Grand outdoor arch with marigold & LED lights', icon: '🚗' },
   { id: 'mandapam-floral', name: 'Mandapam Floral Setup', price: 18000, description: 'Traditional mandapam with fresh flowers', icon: '🌺' },
-  { id: 'reception-decor', name: 'Reception Hall Décor', price: 18000, description: 'Full reception hall decoration with drapes & lights', icon: '✨' },
-  { id: 'outdoor-arch', name: 'Wedding Car Decoration', price: 5000, description: 'Grand outdoor arch with marigold & LED lights', icon: '🏛️' },
+  { id: 'reception-decor', name: 'Birthday Hall Décor', price: 18000, description: 'Full birthday hall decoration with drapes & lights', icon: '✨' },
+  { id: 'outdoor-arch', name: 'Wedding Car Decoration', price: 5000, description: 'Beautiful car décor with flowers & ribbons', icon: '🏛️' },
 ];
 
 export function formatPrice(amount: number): string {
