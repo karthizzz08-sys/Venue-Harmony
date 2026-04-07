@@ -241,15 +241,15 @@ export const photoPackages: PhotoPackage[] = [
 ];
 
 export const decorationItems: DecorationItem[] = [
-  { id: 'stage-basic', name: 'Basic Stage Decoration', price: 15000, description: 'Simple floral & fabric stage setup', icon: '🌸' },
-  { id: 'stage-premium', name: 'Premium Stage Decoration', price: 35000, description: 'Elegant violet & white floral mandapam', icon: '💐' },
-  { id: 'stage-grand', name: 'Grand Stage Decoration', price: 60000, description: 'Luxury full-stage décor with lighting', icon: '👑' },
-  { id: 'entrance', name: 'Entrance Decoration', price: 10000, description: 'Welcome arch with flowers & drapes', icon: '🚪' },
-  { id: 'table-decor', name: 'Table Centerpieces', price: 8000, description: 'Elegant table arrangements (all tables)', icon: '🕯️' },
-  { id: 'car-decor', name: 'Wedding Car Decoration', price: 5000, description: 'Beautiful car décor with flowers & ribbons', icon: '🚗' },
-  { id: 'mandapam-floral', name: 'Mandapam Floral Setup', price: 25000, description: 'Traditional mandapam with fresh flowers', icon: '🌺' },
-  { id: 'reception-decor', name: 'Reception Hall Décor', price: 40000, description: 'Full reception hall decoration with drapes & lights', icon: '✨' },
-  { id: 'outdoor-arch', name: 'Outdoor Welcome Arch', price: 18000, description: 'Grand outdoor arch with marigold & LED lights', icon: '🏛️' },
+  { id: 'stage-basic', name: 'Basic Stage Decoration', price: 10000, description: 'Simple floral & fabric stage setup', icon: '🌸' },
+  { id: 'stage-premium', name: 'Premium Stage Decoration', price: 12000, description: 'Elegant violet & white floral mandapam', icon: '💐' },
+  { id: 'stage-grand', name: 'Grand Stage Decoration', price: 15000, description: 'Luxury full-stage décor with lighting', icon: '👑' },
+  { id: 'entrance', name: 'Entrance Decoration', price: 15000, description: 'Welcome arch with flowers & drapes', icon: '🚪' },
+  { id: 'table-decor', name: 'Table Centerpieces', price: 15000, description: 'Elegant table arrangements (all tables)', icon: '🕯️' },
+  { id: 'car-decor', name: 'Outdoor Welcome Arch', price: 15000, description: 'Beautiful car décor with flowers & ribbons', icon: '🚗' },
+  { id: 'mandapam-floral', name: 'Mandapam Floral Setup', price: 18000, description: 'Traditional mandapam with fresh flowers', icon: '🌺' },
+  { id: 'reception-decor', name: 'Reception Hall Décor', price: 18000, description: 'Full reception hall decoration with drapes & lights', icon: '✨' },
+  { id: 'outdoor-arch', name: 'Wedding Car Decoration', price: 5000, description: 'Grand outdoor arch with marigold & LED lights', icon: '🏛️' },
 ];
 
 export function formatPrice(amount: number): string {
