@@ -24,7 +24,7 @@ const generateBookingPDF = (b: BookingRecord) => {
     '',
     '── Payment Summary ──────────────────',
     `Total Amount: ${formatPrice(b.totalAmount)}`,
-    ...(b.discount > 0 ? [`Discount Applied: -${formatPrice(b.discount)}`] : []),
+    `10% Discount Applied: -${formatPrice(b.discount)}`,
     `Advance Paid (10%): ${formatPrice(b.advanceAmount)}`,
     `Balance Due: ${formatPrice(b.totalAmount - b.advanceAmount)}`,
     '',
