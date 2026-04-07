@@ -29,7 +29,7 @@ const FloatingTotal = () => {
   }, 0);
 
   const subtotal = hallPrice + photoPrice + decorPrice + salonTotal + cateringTotal + eventTotal;
-  const discount = Math.round(subtotal * 0.1);
+  const discount = subtotal >= 300000 ? Math.round(subtotal * 0.1) : 0;
   const total = subtotal - discount;
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const FloatingTotal = () => {
         <div className="min-w-0">
           <p className="text-primary-foreground/80 text-xs sm:text-sm">Estimated Total</p>
           <p className="text-primary-foreground text-lg sm:text-2xl font-bold font-display">{formatPrice(total)}</p>
-          <p className="text-primary-foreground/70 text-xs">10% discount applied</p>
+          {discount > 0 && <p className="text-primary-foreground/70 text-xs">10% discount applied</p>}
         </div>
         <a href="#booking" className="bg-primary-foreground text-primary px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:bg-primary-foreground/90 transition-colors text-sm sm:text-base whitespace-nowrap">
           Book Now →
