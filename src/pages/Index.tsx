@@ -49,8 +49,20 @@ const Index = () => {
             <a href="#dj" className="hover:text-primary-foreground transition-colors">DJ</a>
             <a href="#gallery" className="hover:text-primary-foreground transition-colors">Gallery</a>
           </div>
+          {/* <p className="text-primary-foreground/30 text-xs mt-8">
+            © {new Date().getFullYear()} Bench@boss. All rights reserved.
+          </p> */}
           <p className="text-primary-foreground/30 text-xs mt-8">
-            © {new Date().getFullYear()} Sikara Mahal. All rights reserved.
+            © {new Date().getFullYear()}
+            <a
+              href="https://bench-2-bosscom.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-1 underline"
+            >
+              Bench2boss
+            </a>
+            . All rights reserved.
           </p>
         </div>
       </footer>
