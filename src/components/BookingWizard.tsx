@@ -42,7 +42,7 @@ const BookingWizard = () => {
   }, 0);
 
   const subtotal = hallPrice + photoPrice + decorPrice + salonTotal + cateringTotal + eventTotal;
-  const discount = Math.round(subtotal * 0.1);
+  const discount = subtotal >= 300000 ? Math.round(subtotal * 0.1) : 0;
   const grandTotal = subtotal - discount;
   const advanceAmount = Math.round(grandTotal * 0.1);
 
